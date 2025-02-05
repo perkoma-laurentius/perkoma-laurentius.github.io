@@ -12,39 +12,37 @@ export function init() {
         return;
     }
 
-    const ppdbOnlineButton = document.getElementById('ppdbButton');
-    ppdbOnlineButton.addEventListener('click', () => {
-        navigate('AUTH_REGISTER_PPDB');
-    });
-
-
     loginButton.addEventListener('click', async () => {
-        // Ambil nilai email dan password dari input
-        const email = document.getElementById('email').value.trim();
+        // Ambil nilai login dan password dari input
+        const login = document.getElementById('login').value.trim();
         const password = document.getElementById('password').value.trim();
 
-        if (!email || !password) {
-            alert('Harap isi email dan password.');
+        if (!login || !password) {
+            alert('Harap isi login (email atau nomor telepon) dan password.');
             return;
         }
 
         try {
+            // Lakukan request login ke server
             const response = await NetworkHelper.post(ENDPOINTS.AUTH.LOGIN, {
-                email: email,
+                login: login,
                 password: password
             });
 
             console.log('Login Response:', response);
 
-            // Simpan token ke localStorage atau sessionStorage
+            // Simpan token dan informasi pengguna ke localStorage
             localStorage.setItem('token', response.data.token);
+            localStorage.setItem('id', response.data.id);
+            localStorage.setItem('email', response.data.email);
+            localStorage.setItem('phone', response.data.phone);
             localStorage.setItem('role_id', response.data.role_id);
             localStorage.setItem('login_as', response.data.login_as);
-            localStorage.setItem('email', response.data.email); 
-            
+
             const roleId = response.data.role_id;
 
-            if (roleId === 998) {
+            // Navigasi berdasarkan role pengguna
+            if (roleId === 1) {
                 console.log("Navigating to Admin Dashboard");
                 navigate('DASHBOARDADMIN');
             } else if (roleId === 2) {
@@ -52,26 +50,7 @@ export function init() {
                 navigate('DASHBOARDGURU');
             } else if (roleId === 777) {
                 console.log("Navigating to PPDB Dashboard");
-
-                const studentRegistrationId = response.data.student_registration_id;
-                const jalurPeriode = response.data.jalur_periode;
-
-                // Simpan student_registration_id ke localStorage
-                if (studentRegistrationId) {
-                    localStorage.setItem('student_registration_id', studentRegistrationId);
-                    console.log('Student Registration ID saved:', studentRegistrationId);
-                } else {
-                    console.warn('Student Registration ID not found.');
-                }
-
-                // Cek apakah jalur_periode ada
-                if (jalurPeriode && jalurPeriode.jalur_periode_id) {
-                    console.log("User terdaftar di Jalur Periode:", jalurPeriode.nama_jalur);
-                    navigate('DASHBOARD_PPDB'); 
-                } else {
-                    console.log("User belum memilih Jalur Periode");
-                    navigate('JALUR_PPDB_USERS'); 
-                }
+                navigate('DASHBOARD_PPDB');
             } else {
                 console.log("Navigating to Default Dashboard");
                 navigate('ERROR404LOGIN');
@@ -79,8 +58,8 @@ export function init() {
         } catch (error) {
             console.error('Login Failed:', error);
 
-            // Handle jika error response dari server
-            const errorMessage = error.response?.data?.message || 'Login gagal. Silakan periksa email dan password Anda.';
+            // Tangani jika ada error dari server
+            const errorMessage = error.response?.data?.message || 'Login gagal. Silakan periksa login dan password Anda.';
             alert(errorMessage);
         }
     });
