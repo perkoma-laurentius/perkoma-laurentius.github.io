@@ -46,11 +46,11 @@ export function init() {
                 console.log("Navigating to Admin Dashboard");
                 navigate('DASHBOARDADMIN');
             } else if (roleId === 2) {
-                console.log("Navigating to Guru Dashboard");
-                navigate('DASHBOARDGURU');
-            } else if (roleId === 777) {
-                console.log("Navigating to PPDB Dashboard");
-                navigate('DASHBOARD_PPDB');
+                console.log("Navigating to KAKAKPENDAMPING Dashboard");
+                navigate('DASHBOARDKAKAKPENDAMPING');
+            } else if (roleId === 0) {
+                console.log("Navigating to ERROR404LOGIN Dashboard");
+                navigate('ERROR404LOGIN');
             } else {
                 console.log("Navigating to Default Dashboard");
                 navigate('ERROR404LOGIN');

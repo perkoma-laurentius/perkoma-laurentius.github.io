@@ -77,25 +77,9 @@ export const pageScripts = {
         fileName: 'pages-section/admin/users.html',
         script: '/assets/js/modules/admin/users.js'
     },
-
-    // GURU
-    JADWALPELAJARANGURU: {
-        fileName: 'pages-section/guru/jadwal-pelajaran.html',
-        script: '/assets/js/modules/guru/jadwal-pelajaran.js'
-    },
-    STUDENT_CLASSES_GURU: {
-        fileName: 'pages-section/guru/absensi-siswa.html',
-        script: '/assets/js/modules/guru/absensi-siswa.js'
-    },
-
-    JALUR_PPDB: {
-        fileName: 'pages-section/ppdb/jalur-pendaftaran.html',
-        script: '/assets/js/modules/ppdb/jalur-pendaftaran.js'
-    },
-
-    PERSYARATAN_NILAI: {
-        fileName: 'pages-section/ppdb/persyaratan-nilai.html',
-        script: '/assets/js/modules/ppdb/persyaratan-nilai.js'
+    DASHBOARDKAKAKPENDAMPING: {
+        fileName: 'pages-section/ppdb/dashboard-kapen.html',
+        script: '/assets/js/modules/ppdb/dashboard-kapen.js'
     },
 
 
@@ -129,10 +113,7 @@ export const pageScripts = {
         script: '/assets/js/modules/ppdb/jalur-ppdb.js'
     },
 
-    DASHBOARD_PPDB: {
-        fileName: 'pages-section/ppdb/dashboard.html',
-        script: '/assets/js/modules/ppdb/dashboard.js'
-    },
+    
     PRINT_OUT: {
         fileName: 'pages-section/ppdb/print-out.html',
         script: '/assets/js/modules/ppdb/print-out.js'
