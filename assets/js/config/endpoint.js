@@ -53,121 +53,54 @@ export const ENDPOINTS = {
         CHANGE_PASSWORD: (id) => `/api/users/password/${id}`,
     },
     STUDENTS: {
-        GET_STUDENTS: '/api/students',
-        CREATE_STUDENTS: '/api/students'
+        GET_STUDENTS: '/api/peserta',
+        CREATE_STUDENTS: '/api/peserta',
+        GET_BY_KELOMPOK: (kelompok_id) => `/api/peserta/kelompok/${kelompok_id}`,
+        BULK: '/api/peserta/bulk',
+    },
+    PENDAMPING: {
+        GET_ALL: '/api/pendamping',
+        GET_BY_ID: (id) => `/api/pendamping/${id}`,
+        CREATE: '/api/pendamping',
+        UPDATE: (id) => `/api/pendamping/${id}`,
+        DELETE: (id) => `/api/pendamping/${id}`
     },
     
-  
+    PERTEMUAN: {
+        GET_ALL: "/api/pertemuan",
+        GET_BY_ID: (id) => `/api/pertemuan/${id}`,
+        CREATE: "/api/pertemuan",
+        UPDATE: (id) => `/api/pertemuan/${id}`,
+        DELETE: (id) => `/api/pertemuan/${id}`
+    },
+    ABSENSI: {
+        GET_ALL: "/api/absensi",
+        GET_BY_ID: (id) => `/api/absensi/${id}`,
+        CREATE: "/api/absensi",
+        UPDATE: (id) => `/api/absensi/${id}`,
+        DELETE: (id) => `/api/absensi/${id}`,
+        GET_BY_KELOMPOK: (kelompok_id, page = 1, size = 5) => 
+            `/api/absensi/kelompok/${kelompok_id}?page=${page}&size=${size}`
+        
+    },
+    KELOMPOK: {
 
-    SEMESTER: {
-            LIST: '/api/semester/list',
-            ADD: '/api/semester',
-            GET_BY_ID: '/api/semester',
-            UPDATE: (id) => `/api/semester/${id}`,
-            DELETE: (id) => `/api/semester/${id}`,
+        GET_ALL: '/api/kelompok',
+        GET_BY_ID: (id) => `/api/kelompok/${id}`,
+        CREATE: '/api/kelompok',
+        UPDATE: (id) => `/api/kelompok/${id}`,
+        DELETE: (id) => `/api/kelompok/${id}`,
+        GET_PESERTA_BY_KELOMPOK: (kelompok_id) => `/api/peserta/kelompok/${kelompok_id}`,
+        ADD_PESERTA_TO_KELOMPOK: '/api/kelompok/add-peserta',
+        REMOVE_PESERTA_FROM_KELOMPOK: (kelompokId, pesertaId) => `/api/kelompok/${kelompokId}/peserta/${pesertaId}`
     },
 
-    JADWAL_PELAJARAN: {
-        ADD: '/api/jadwalPelajaran',
-        GET_LIST: '/api/jadwalPelajaran',
-        GET_BY_ID: (id) => `/api/jadwalPelajaran/${id}`,
-        UPDATE: (id) => `/api/jadwalPelajaran/${id}`,
-        DELETE: (id) => `/api/jadwalPelajaran/${id}`,
-    },
+    BINTANG:{
+        GET_ALL: '/api/bintang',
+        GET_STAR_FROM_PESERTA : (id) => `/api/bintang/peserta/${id}`,
+        CREATE: '/api/bintang',
+        DELETE: '/api/bintang',
 
-
-    KEHADIRAN: {
-        ADD: '/api/kehadiran',
-        GET_LIST: '/api/kehadiran',
-        GET_BY_ID: (id) => `/api/kehadiran/${id}`,
-        UPDATE: (id) => `/api/kehadiran/${id}`,
-        DELETE: (id) => `/api/kehadiran/${id}`,
-    },
-    STUDENT_CLASSES: {
-        CREATE: '/api/student-classes',
-        GET_BY_CLASS: '/api/student-classes',
-        REMOVE: '/api/student-classes',
-        BULK: '/api/student-classes/bulk',
-        ATTENDANCE: '/api/absensi',
-        GET_BY_CLASS_TEACHERS: '/api/student-classes-teachers',
-
-    },
-    SCHOOL_ANNOUNCEMENTS: {
-        GET_ALL: '/api/announcements', // Mendapatkan semua pengumuman
-        CREATE: '/api/announcements', // Membuat pengumuman baru
-        GET_BY_ID: (id) => `/api/announcements/${id}`, // Mendapatkan pengumuman berdasarkan ID
-        UPDATE: (id) => `/api/announcements/${id}`, // Memperbarui pengumuman berdasarkan ID
-        DELETE: (id) => `/api/announcements/${id}`, // Menghapus pengumuman berdasarkan ID
-    },
-
-
-    // GURU
-    JADWAL_PELAJARAN_GURU: {
-        GET_LIST: '/api/jadwalPelajaranGuru',
-        GET_BY_ID: (id) => `/api/jadwalPelajaran/${id}`,
-        UPDATE: (id) => `/api/jadwalPelajaran/${id}`,
-        DELETE: (id) => `/api/jadwalPelajaran/${id}`,
-    },
-
-    STUDENT_CLASSES_GURU: {
-        CREATE: '/api/student-classes',
-        GET_BY_CLASS: '/api/student-classes',
-        REMOVE: '/api/student-classes',
-        BULK: '/api/student-classes/bulk'
-    },
-
-    PPDB_JALUR_PERIODE: {
-        GET_LIST: '/api/ppdb-jalur-periode', // Mendapatkan semua data jalur periode dengan pagination
-        CREATE: '/api/ppdb-jalur-periode', // Membuat jalur periode baru
-        GET_BY_ID: (id) => `/api/ppdb-jalur-periode/${id}`,
-        UPDATE: (id) => `/api/ppdb-jalur-periode/${id}`,
-        DELETE: (id) => `/api/ppdb-jalur-periode/${id}`,
-
-    },
-
-    PERSYARATAN_NILAI: {
-        GET_LIST: '/api/grade-requirements', // Mendapatkan semua persyaratan nilai
-        CREATE: '/api/grade-requirements', // Membuat persyaratan nilai baru
-        GET_BY_ID: (id) => `/api/grade-requirements/${id}`, // Mendapatkan persyaratan nilai berdasarkan ID
-        UPDATE: (id) => `/api/grade-requirements/${id}`, // Memperbarui persyaratan nilai berdasarkan ID
-        DELETE: (id) => `/api/grade-requirements/${id}`, // Menghapus persyaratan nilai berdasarkan ID
-    },
-
-    STUDENT_REGISTRATIONS: {
-        GET_BY_JALUR: (jalurPeriodeId) => `/api/students-registrations/jalur/${jalurPeriodeId}`,
-        CREATE: '/api/student-registrations',
-        UPDATE_STATUS: (id) => `/api/student-registrations/status/${id}`,
-        GET_BY_ID : (id) => `/api/student-registrations/${id}`,
-        UPDATE: (id) => `/api/student-registrations/${id}`,
-    },
-    
-    FORM_STATUS: {
-        GET_BY_STUDENT_ID : (studentRegistrationId) => `/api/form-status/student/${studentRegistrationId}`,
-        GET_BY_STUDENT_DETAILS_ID : (studentRegistrationId) => `/api/form-status/student/details/${studentRegistrationId}`,
-
-    },
-
-    STUDENT_PARENTS: {
-        GET_BY_STUDENT_ID : (studentRegistrationId) => `/api/student-parents/student/${studentRegistrationId}`,
-        CREATE: '/api/student-parents',
-        UPDATE_BY_ID: (id) => `/api/student-parents/${id}`,
-        UPDATE_BY_STUDENT_ID : (studentRegistrationId) => `/api/student-parents/student/${studentRegistrationId}`,
-
-        NEWCREATE: '/api/student-parents',
-
-    },
-    GRADE_REQUIREMENTS:{
-        GET_BY_JALUR_ID : (jalurId) => `/api/grade-requirements/jalur/${jalurId}`,
-    },
-    STUDENT_GRADES: {
-        CREATE: '/api/student-grades', // Untuk membuat nilai baru
-        GET_ALL: '/api/student-grades', // Mendapatkan semua nilai
-        GET_BY_ID: (id) => `/api/student-grades/${id}`, // Mendapatkan nilai berdasarkan ID
-        UPDATE_BY_ID: (id) => `/api/student-grades/${id}`, // Memperbarui nilai berdasarkan ID
-        DELETE_BY_ID: (id) => `/api/student-grades/${id}`, // Menghapus nilai berdasarkan ID
-        GET_BY_STUDENT_REGISTRATION_ID: (studentRegistrationId) => `/api/student-grades/student/${studentRegistrationId}`, // Mendapatkan nilai berdasarkan student_registration_id
-        UPSERT_BY_STUDENT_REGISTRATION_ID: (studentRegistrationId) => `/api/student-grades/student/${studentRegistrationId}`, // Upsert nilai berdasarkan student_registration_id
-    },
-
+    }
  
 };

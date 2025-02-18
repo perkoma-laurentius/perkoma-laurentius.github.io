@@ -14,7 +14,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>PERKOMA LAURENTIUS - JALUR PENDAFTARAN | SISTEM AKADEMIK</title>
+    <title>PERKOMA LAURENTIUS - SISWA | SISTEM AKADEMIK</title>
 
     <meta name="description" content="" />
 
@@ -85,7 +85,7 @@
                           <path fill-rule="evenodd" clip-rule="evenodd" d="M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z" fill="#7367F0"/>
                       </svg>
                   </span>
-                  <span class="app-brand-text demo menu-text fw-bold">PERKOMA LAURENTIUS</span>
+                  <span class="app-brand-text demo menu-text fw-bold">SIKOMA</span>
               </a>
       
               <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -211,23 +211,30 @@
           <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
-          
             <div class="container-xxl flex-grow-1 container-p-y">
               <div class="col-12">
                 <div class="card">
                   <!-- Header Tabel -->
                   <div class="card-header d-flex align-items-center justify-content-between">
                     <div class="card-title mb-0">
-                      <h5 class="m-0 me-2">Daftar Jalur Pendaftaran</h5>
+                      <h5 class="m-0 me-2">Daftar Kakak Pendamping</h5>
                     </div>
-                    <div class="d-flex gap-2">
-                      <button id="exportStudentBtn" class="btn btn-label-secondary rounded-pill">
-                        <i class="ti ti-file-export me-2"></i> Export
-                      </button>
-                      <button id="addNewRecordBtn" class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#editJalurPeriode" onclick="resetForm('add')">
-                        <i class="ti ti-plus me-2"></i> Tambah Jalur Pendaftaran
-                    </button>
-                    
+                    <div class="row g-2">
+                      <div class="col-12 col-md-auto">
+                        <button id="exportPendampingBtn" class="btn btn-label-secondary rounded-pill w-100">
+                          <i class="ti ti-file-export me-2"></i> Export
+                        </button>
+                      </div>
+                      <div class="col-12 col-md-auto">
+                        <button id="bulkUpdateButton" class="btn btn-warning rounded-pill w-100" data-bs-toggle="modal" data-bs-target="#bulkUpdateModal">
+                          Bulk Update
+                        </button>
+                      </div>
+                      <div class="col-12 col-md-auto">
+                        <button id="addNewPendampingBtn" class="btn btn-primary rounded-pill w-100">
+                          <i class="ti ti-plus me-2"></i> Tambah Data
+                        </button>
+                      </div>
                     </div>
                   </div>
           
@@ -237,14 +244,14 @@
                       <thead>
                         <tr>
                           <th>No</th>
-                          <th>Nama Jalur</th>
-                          <th>Periode Mulai</th>
-                          <th>Periode Selesai</th>
-                          <th>Deskripsi Jalur</th>
-                          <th>Status</th>
-                          <th>Aksi</th>
-
-                        
+                          <th>Nama Lengkap</th>
+                          <th>Alamat</th>
+                          <th>Tanggal Lahir</th>
+                          <th>Jenis Kelamin</th>
+                          <th>No Telepon</th>
+                          <th>Email</th>
+                          <th>Updated At</th>
+                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody id="tableBody">
@@ -256,81 +263,145 @@
               </div>
             </div>
           
-            <!-- Modal Add Jalur Periode -->
-              <div class="modal fade" id="editJalurPeriode" tabindex="-1" aria-hidden="true" data-mode="add">
-                <div class="modal-dialog modal-lg modal-simple modal-edit-jalur-periode">
-                  <div class="modal-content">
-                    <div class="modal-body">
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      <div class="text-center mb-6">
-                        <h4 class="mb-2" id="modalTitle">Tambah Jalur Periode</h4>
-                        <p id="modalDescription">Isi form di bawah ini untuk menambahkan jalur periode baru.</p>
-                      </div>
-                      <form id="editJalurPeriodeForm" class="row g-6">
-                        <!-- Nama Jalur -->
-                        <div class="col-12">
-                          <label class="form-label" for="namaJalur">Nama Jalur</label>
-                          <input
-                            type="text"
-                            id="namaJalur"
-                            name="nama_jalur"
-                            class="form-control"
-                            placeholder="Masukkan Nama Jalur"
-                            required
-                          />
-                        </div>
-                        <!-- Periode Mulai -->
-                        <div class="col-12">
-                          <label class="form-label" for="periodeMulai">Periode Mulai</label>
-                          <input
-                            type="date"
-                            id="periodeMulai"
-                            name="periode_mulai"
-                            class="form-control"
-                            required
-                          />
-                        </div>
-                        <!-- Periode Selesai -->
-                        <div class="col-12">
-                          <label class="form-label" for="periodeSelesai">Periode Selesai</label>
-                          <input
-                            type="date"
-                            id="periodeSelesai"
-                            name="periode_selesai"
-                            class="form-control"
-                            required
-                          />
-                        </div>
-                        <!-- Deskripsi -->
-                        <div class="col-12">
-                          <label class="form-label" for="deskripsi">Deskripsi</label>
-                          <textarea
-                            id="deskripsi"
-                            name="deskripsi"
-                            class="form-control"
-                            rows="3"
-                            placeholder="Masukkan Deskripsi Jalur Periode"
-                          ></textarea>
-                        </div>
-                        <!-- Submit -->
-                        <div class="col-12 text-center">
-                          <button type="submit" class="btn btn-primary me-3">Submit</button>
-                          <button
-                            type="reset"
-                            class="btn btn-label-secondary"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </form>
+            <!-- Modal Tambah Kakak Pendamping -->
+            <div class="modal fade" id="editPendamping" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-lg modal-simple modal-edit-pendamping">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="text-center mb-6">
+                      <h4 class="mb-2" id="modalTitle">Tambah Kakak Pendamping</h4>
+                      <p id="modalDescription">Isi form di bawah ini untuk menambahkan kakak pendamping baru.</p>
                     </div>
+                    <form id="editPendampingForm" class="row g-3">
+                      <!-- Nama Lengkap -->
+                      <div class="col-12">
+                        <label class="form-label" for="nama">Nama Lengkap</label>
+                        <input
+                          type="text"
+                          id="nama"
+                          name="nama"
+                          class="form-control"
+                          placeholder="Masukkan Nama Lengkap"
+                          required
+                        />
+                      </div>
+                      <!-- Email -->
+                      <div class="col-12">
+                        <label class="form-label" for="email">Email</label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          class="form-control"
+                          placeholder="Masukkan Email"
+                          required
+                        />
+                      </div>
+                      <!-- Alamat -->
+                      <div class="col-12">
+                        <label class="form-label" for="alamat">Alamat</label>
+                        <textarea
+                          id="alamat"
+                          name="alamat"
+                          class="form-control"
+                          rows="3"
+                          placeholder="Masukkan Alamat"
+                          required
+                        ></textarea>
+                      </div>
+                      <!-- Tanggal Lahir -->
+                      <div class="col-12">
+                        <label class="form-label" for="tanggal_lahir">Tanggal Lahir</label>
+                        <input
+                          type="date"
+                          id="tanggal_lahir"
+                          name="tanggal_lahir"
+                          class="form-control"
+                          required
+                        />
+                      </div>
+                      <!-- Jenis Kelamin -->
+                      <div class="col-12">
+                        <label class="form-label" for="gender">Jenis Kelamin</label>
+                        <select id="gender" name="gender" class="form-select" required>
+                          <option value="">Pilih Jenis Kelamin</option>
+                          <option value="L">Laki-Laki</option>
+                          <option value="P">Perempuan</option>
+                        </select>
+                      </div>
+                      <!-- No Telepon -->
+                      <div class="col-12">
+                        <label class="form-label" for="no_hp">No. Telepon</label>
+                        <input
+                          type="text"
+                          id="no_hp"
+                          name="no_hp"
+                          class="form-control"
+                          placeholder="Masukkan No. Telepon"
+                          required
+                        />
+                      </div>
+                      <!-- Submit -->
+                      <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary me-3">Submit</button>
+                        <button
+                          type="reset"
+                          class="btn btn-label-secondary"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
-
-            
+            </div>
+          
+            <!-- Modal Bulk Update -->
+            <div class="modal fade" id="bulkUpdateModal" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-lg modal-simple modal-edit-user">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="text-center mb-6">
+                      <h4 class="mb-2" id="bulkModalTitle">Bulk Update Data Kakak Pendamping</h4>
+                      <p id="bulkModalDescription">
+                        Unggah file berisi data kakak pendamping untuk melakukan pembaruan dalam jumlah besar. Format file yang didukung adalah <b>Excel (.xlsx)</b> atau <b>CSV (.csv)</b>.
+                      </p>
+                    </div>
+                    <form id="bulkUpdateForm" class="row g-6">
+                      <!-- Input untuk unggah file -->
+                      <div class="col-12">
+                        <label class="form-label" for="fileUpload">Unggah File</label>
+                        <input
+                          type="file"
+                          id="fileUpload"
+                          name="fileUpload"
+                          class="form-control"
+                          accept=".csv, .xlsx"
+                        />
+                        <small class="text-muted">
+                          Pastikan file yang diunggah memiliki format kolom sesuai dengan template.
+                        </small>
+                      </div>
+                      <!-- Link unduhan untuk template -->
+                      <div class="col-12">
+                        <button id="downloadTemplateBtn" class="btn btn-link">
+                          <i class="ti ti-download"></i> Unduh Template
+                        </button>
+                      </div>
+                      <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary me-3">Submit</button>
+                        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
           
             <!-- Toast Container di Body -->
             <div
@@ -359,6 +430,7 @@
             </div>
           </div>
           
+          
           <!-- Content wrapper -->
         </div>
         <!-- / Layout page -->
@@ -386,6 +458,9 @@
     <script src="../../assets/vendor/js/menu.js"></script>
     <script type="module" src="../../assets/js/modules/main.js"></script>
     <!-- endbuild -->
+<!-- Tambahkan sebelum script users-peserta.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <!-- Vendors JS -->
     <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>

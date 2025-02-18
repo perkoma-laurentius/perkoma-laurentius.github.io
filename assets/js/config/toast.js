@@ -14,7 +14,7 @@ export function showToast(message, type) {
     }
 
     // Atur tipe warna toast
-    toastEl.classList.remove('text-bg-success', 'text-bg-danger', 'text-bg-warning');
+    toastEl.classList.remove('text-bg-success', 'text-bg-danger', 'text-bg-warning', 'text-bg-info');
     toastEl.classList.add(`text-bg-${type}`);
 
     // Atur pesan toast

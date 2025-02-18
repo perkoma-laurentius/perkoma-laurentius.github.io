@@ -40,7 +40,13 @@ export function init() {
             localStorage.setItem('login_as', response.data.login_as);
 
             const roleId = response.data.role_id;
-
+            if (roleId === 2 && response.data.kelompok_pendamping) {
+                localStorage.setItem('kelompok_id', response.data.kelompok_pendamping.id);
+                localStorage.setItem('kelompok_nama', response.data.kelompok_pendamping.nama);
+            } else {
+                localStorage.removeItem('kelompok_id');  // Hapus jika bukan pendamping
+                localStorage.removeItem('kelompok_nama');
+            }
             // Navigasi berdasarkan role pengguna
             if (roleId === 1) {
                 console.log("Navigating to Admin Dashboard");

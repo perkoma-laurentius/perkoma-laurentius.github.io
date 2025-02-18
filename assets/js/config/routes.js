@@ -56,17 +56,18 @@ export const pageScripts = {
         fileName: 'pages-section/admin/kehadiran.html',
         script: '/assets/js/modules/kehadiran.js'
     },
-    KELOLASISWA: {
-        fileName: 'pages-section/admin/kelola-siswa.html',
-        script: '/assets/js/modules/kelola-siswa.js'
-    },
+  
     TEACHERS: {
         fileName: 'pages-section/admin/users-teachers.html',
         script: '/assets/js/modules/users-teachers.js'
     },
     STUDENTS: {
-        fileName: 'pages-section/admin/users-siswa.html',
-        script: '/assets/js/modules/users-siswa.js'
+        fileName: 'pages-section/admin/users-peserta.html',
+        script: '/assets/js/modules/users-peserta.js'
+    },
+    PENDAMPING: {
+        fileName: 'pages-section/admin/users-kakak-pendamping.html',
+        script: '/assets/js/modules/users-kakak-pendamping.js'
     },
 
     PENGUMUMAN: {
@@ -77,46 +78,44 @@ export const pageScripts = {
         fileName: 'pages-section/admin/users.html',
         script: '/assets/js/modules/admin/users.js'
     },
+    DAFTAR_PERTEMUAN: {
+        fileName: 'pages-section/admin/daftar-pertemuan.html',
+        script: '/assets/js/modules/daftar-pertemuan.js'
+    },
+    DAFTAR_PRESENSI_PESERTA: {
+        fileName: 'pages-section/admin/daftar-presensi-peserta.html',
+        script: '/assets/js/modules/daftar-presensi-peserta.js'
+    },
+    KELOMPOK: {
+        fileName: 'pages-section/admin/kelompok.html',
+        script: '/assets/js/modules/kelompok.js'
+    },
+    KELOLA_PESERTA: {
+        fileName: 'pages-section/admin/kelola-peserta.html',
+        script: '/assets/js/modules/kelola-peserta.js'
+    },
+    REKAP_BINTANG: {
+        fileName: 'pages-section/admin/rekap-bintang.html',
+        script: '/assets/js/modules/rekap-bintang.js'
+    },
+    
+    PRESENSIDANBINTANG: {
+        fileName: 'pages-section/kapen/presensi-dan-bintang.html',
+        script: '/assets/js/modules/kapen/presensi-dan-bintang.js'
+    },
+    PRESENSI: {
+        fileName: 'pages-section/kapen/presensi.html',
+        script: '/assets/js/modules/kapen/presensi.js'
+    },
+    BINTANG: {
+        fileName: 'pages-section/kapen/bintang.html',
+        script: '/assets/js/modules/kapen/bintang.js'
+    },
     DASHBOARDKAKAKPENDAMPING: {
-        fileName: 'pages-section/ppdb/dashboard-kapen.html',
+        fileName: 'pages-section/dashboard-kapen.html',
         script: '/assets/js/modules/ppdb/dashboard-kapen.js'
     },
 
 
-
-    //PPDB SMP
-    AUTH_REGISTER_PPDB: {
-        fileName: 'pages-section/ppdb/auth-register-ppdb.html',
-        script: '/assets/js/modules/ppdb/auth-register-ppdb.js'
-    },
-
-    DATA_SISWA: {
-        fileName: 'pages-section/ppdb/data-siswa.html',
-        script: '/assets/js/modules/ppdb/data-siswa.js'
-    },
-    DATA_ORANGTUA: {
-        fileName: 'pages-section/ppdb/data-orangtua.html',
-        script: '/assets/js/modules/ppdb/data-orangtua.js'
-    },
-
-    DATA_NILAI: {
-        fileName: 'pages-section/ppdb/data-nilai.html',
-        script: '/assets/js/modules/ppdb/data-nilai.js'
-    },
-    SISWA_BY_JALUR: {
-        fileName: 'pages-section/ppdb/siswa-by-jalur.html',
-        script: '/assets/js/modules/ppdb/siswa-by-jalur.js'
-    },
-
-    JALUR_PPDB_USERS: {
-        fileName: 'pages-section/ppdb/jalur-ppdb.html',
-        script: '/assets/js/modules/ppdb/jalur-ppdb.js'
-    },
-
-    
-    PRINT_OUT: {
-        fileName: 'pages-section/ppdb/print-out.html',
-        script: '/assets/js/modules/ppdb/print-out.js'
-    },
    
 };

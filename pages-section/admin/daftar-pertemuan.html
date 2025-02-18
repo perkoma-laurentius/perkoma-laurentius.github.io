@@ -14,7 +14,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>PERKOMA LAURENTIUS - ABSEN SISWA | SISTEM AKADEMIK</title>
+    <title>PERKOMA LAURENTIUS - SISWA | SISTEM AKADEMIK</title>
 
     <meta name="description" content="" />
 
@@ -85,7 +85,7 @@
                           <path fill-rule="evenodd" clip-rule="evenodd" d="M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z" fill="#7367F0"/>
                       </svg>
                   </span>
-                  <span class="app-brand-text demo menu-text fw-bold">PERKOMA LAURENTIUS</span>
+                  <span class="app-brand-text demo menu-text fw-bold">SIKOMA</span>
               </a>
       
               <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -211,184 +211,155 @@
           <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
-
+          
             <div class="container-xxl flex-grow-1 container-p-y">
-              
               <div class="col-12">
                 <div class="card">
                   <!-- Header Tabel -->
                   <div class="card-header d-flex align-items-center justify-content-between">
                     <div class="card-title mb-0">
-                      <h5 class="m-0 me-2">KELOLA SISWA</h5>
+                      <h5 class="m-0 me-2">Daftar Pertemuan</h5>
                     </div>
-                    <div class="d-flex gap-2">
-                      <button id="exportBtn" class="btn btn-label-secondary rounded-pill">
+                    <div class="d-flex flex-wrap gap-2">
+                      <button id="exportPesertaBtn" class="btn btn-label-secondary rounded-pill">
                         <i class="ti ti-file-export me-2"></i> Export
                       </button>
-
-                      
-                      
+                      <!-- <button id="bulkUpdateButton" class="btn btn-warning rounded-pill" data-bs-toggle="modal" data-bs-target="#bulkUpdateModal">
+                        Bulk Update
+                      </button> -->
+                      <button id="addNewPertemuanBtn" class="btn btn-primary rounded-pill">
+                        <i class="ti ti-plus me-2"></i> Tambah Pertemuan
+                      </button>
                     </div>
+                    
+                    
                   </div>
             
                   <!-- Tabel -->
                   <div class="card-datatable table-responsive">
                     <table class="table">
                       <thead>
-                          <tr>
-                            <th>No</th>
-                            <th>Nama Lengkap</th>
-                            <th>NIS</th>
-                            <th>Jenis Kelamin</th>
-                            <th>Tempat Lahir</th>
-                            <th>Tanggal Lahir</th>
-                            <th style="text-align: center;">Aksi</th>
-
-
-                          </tr>
+                        <tr>
+                          <th>No</th>
+                          <th>Nama Pertemuan</th>
+                          <th>Materi Pertemuan</th>
+                          <th>Tanggal</th>
+                          
+                          <th>Updated At</th>
+                          <th>Action</th>
+                        </tr>
                       </thead>
                       <tbody id="tableBody">
-                          <!-- Data akan di-render di sini -->
+                        <!-- Data akan di-render di sini -->
                       </tbody>
-                  </table>
-                 
+                    </table>
+                    <div class="pagination-container d-flex justify-content-between align-items-center p-3"></div>
+
                   </div>
                 </div>
               </div>
             </div>
             
-            <!-- Offcanvas Form -->
-            <!-- Modal Add User -->
-
-            <div class="modal fade" id="editUser" tabindex="-1" aria-hidden="true" data-mode="add">
-              <div class="modal-dialog modal-lg modal-simple modal-edit-user">
-                <div class="modal-content">
-                  <div class="modal-body">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <div class="text-center mb-6">
-                      <h4 class="mb-2" id="modalTitle">Tambah Siswa ke Kelas</h4>
-                      <p id="modalDescription">Isi form di bawah ini untuk menambahkan siswa ke kelas.</p>
-                    </div>
-                    <form id="editUserForm" class="row g-6">
-                      <!-- Dropdown untuk siswa -->
-                      <div class="col-12">
-                        <label class="form-label" for="studentId">Siswa</label>
-                        <select id="studentId" name="studentId" class="form-select">
-                          <option value="">Pilih Siswa</option>
-                        </select>
-                      </div>
-                      <!-- Dropdown untuk kelas -->
-                      
-                      <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary me-3">Submit</button>
-                        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
+            <!-- Modal Tambah Peserta -->
+            <!-- Modal Tambah/Edit Pertemuan -->
+<div class="modal fade" id="editPertemuan" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-simple modal-edit-pertemuan">
+      <div class="modal-content">
+          <div class="modal-body">
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <div class="text-center mb-6">
+                  <h4 class="mb-2" id="modalTitle">Tambah Pertemuan</h4>
+                  <p id="modalDescription">Isi form di bawah ini untuk menambahkan pertemuan baru.</p>
               </div>
-            </div>
-            
-
-            <div class="modal fade" id="bulkUpdateModal" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog modal-lg modal-simple modal-edit-user">
-                <div class="modal-content">
-                  <div class="modal-body">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <div class="text-center mb-6">
-                      <h4 class="mb-2" id="bulkModalTitle">Bulk Update Data Siswa</h4>
-                      <p id="bulkModalDescription">
-                        Unggah file berisi data siswa untuk melakukan pembaruan dalam jumlah besar. Format file yang didukung adalah <b>Excel (.xlsx)</b> atau <b>CSV (.csv)</b>.
-                      </p>
-                    </div>
-                    <form id="bulkUpdateForm" class="row g-6">
-                      <!-- Input untuk unggah file -->
-                      <div class="col-12">
-                        <label class="form-label" for="fileUpload">Unggah File</label>
-                        <input
-                          type="file"
-                          id="fileUpload"
-                          name="fileUpload"
+              <form id="editPertemuanForm" class="row g-3">
+                  <!-- Nama Pertemuan -->
+                  <div class="col-12">
+                      <label class="form-label" for="nama_pertemuan">Nama Pertemuan</label>
+                      <input
+                          type="text"
+                          id="nama_pertemuan"
+                          name="nama_pertemuan"
                           class="form-control"
-                          accept=".csv, .xlsx"
+                          placeholder="Masukkan Nama Pertemuan"
                           required
-                        />
-                        <small class="text-muted">
-                          Pastikan file yang diunggah memiliki format kolom sesuai dengan template.
-                        </small>
-                      </div>
-                      <!-- Link unduhan untuk template -->
-                      <div class="col-12">
-                        <a href="/template-bulk-update.xlsx" download class="btn btn-link">
-                          <i class="ti ti-download"></i> Unduh Template
-                        </a>
-                      </div>
-                      <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary me-3">Submit</button>
-                        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancel</button>
-                      </div>
-                    </form>
+                      />
                   </div>
-                </div>
-              </div>
-            </div>
-            
-            
-            
-           
-          <!-- Toast Container di Body -->
-            <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-              <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="toastSuccess">
-                  <div class="d-flex">
-                      <div class="toast-body" id="toastMessage">
-                          <!-- Pesan sukses atau error akan diisi melalui JavaScript -->
-                      </div>
-                      <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                  <!-- Materi Pertemuan -->
+                  <div class="col-12">
+                      <label class="form-label" for="materi_pertemuan">Materi Pertemuan</label>
+                      <textarea
+                          id="materi_pertemuan"
+                          name="materi_pertemuan"
+                          class="form-control"
+                          rows="3"
+                          placeholder="Masukkan Materi Pertemuan"
+                          required
+                      ></textarea>
                   </div>
-              </div>
-            </div>
-
-
-                        <!-- / Content -->
-
-            <!-- Footer -->
-            <footer class="content-footer footer bg-footer-theme">
-              <div class="container-xxl">
-                <div
-                  class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-                  <div class="text-body">
-                    ©
-                    <script>
-                      document.write(new Date().getFullYear());
-                    </script>
-                    , made with ❤️ by <a href="https://pixinvent.com" target="_blank" class="footer-link">Pixinvent</a>
+                  <!-- Tanggal Pertemuan -->
+                  <div class="col-12">
+                      <label class="form-label" for="tanggal_pertemuan">Tanggal Pertemuan</label>
+                      <input
+                          type="date"
+                          id="tanggal_pertemuan"
+                          name="tanggal_pertemuan"
+                          class="form-control"
+                          required
+                      />
                   </div>
-                  <div class="d-none d-lg-inline-block">
-                    <a href="https://themeforest.net/licenses/standard" class="footer-link me-4" target="_blank"
-                      >License</a
-                    >
-                    <a href="https://1.envato.market/pixinvent_portfolio" target="_blank" class="footer-link me-4"
-                      >More Themes</a
-                    >
-
-                    <a
-                      href="https://demos.pixinvent.com/vuexy-html-admin-template/documentation/"
-                      target="_blank"
-                      class="footer-link me-4"
-                      >Documentation</a
-                    >
-
-                    <a href="https://pixinvent.ticksy.com/" target="_blank" class="footer-link d-none d-sm-inline-block"
-                      >Support</a
-                    >
+                  <!-- Submit -->
+                  <div class="col-12 text-center">
+                      <button type="submit" class="btn btn-primary me-3">Submit</button>
+                      <button
+                          type="reset"
+                          class="btn btn-label-secondary"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                      >
+                          Cancel
+                      </button>
                   </div>
-                </div>
-              </div>
-            </footer>
-            <!-- / Footer -->
-
-            <div class="content-backdrop fade"></div>
+              </form>
           </div>
+      </div>
+  </div>
+</div>
+
+            
+
+
+            <!-- Modal Bulk Update -->
+            
+            
+          
+            <!-- Toast Container di Body -->
+            <div
+              class="toast-container position-fixed top-0 end-0 p-3"
+              style="z-index: 1050;"
+            >
+              <div
+                class="toast align-items-center text-bg-success border-0"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+                id="toastSuccess"
+              >
+                <div class="d-flex">
+                  <div class="toast-body" id="toastMessage">
+                    <!-- Pesan sukses atau error akan diisi melalui JavaScript -->
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-close me-2 m-auto"
+                    data-bs-dismiss="toast"
+                    aria-label="Close"
+                  ></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          
           <!-- Content wrapper -->
         </div>
         <!-- / Layout page -->
@@ -416,7 +387,9 @@
     <script src="../../assets/vendor/js/menu.js"></script>
     <script type="module" src="../../assets/js/modules/main.js"></script>
     <!-- endbuild -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Tambahkan sebelum script users-peserta.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <!-- Vendors JS -->
     <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>

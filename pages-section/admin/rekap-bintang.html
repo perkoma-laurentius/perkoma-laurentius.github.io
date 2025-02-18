@@ -14,7 +14,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-      <title>PERKOMA LAURENTIUS - JADWAL PELAJARAN | SISTEM AKADEMIK</title>
+    <title>PERKOMA LAURENTIUS - SISWA | SISTEM AKADEMIK</title>
 
     <meta name="description" content="" />
 
@@ -56,6 +56,10 @@
     <link rel="stylesheet" href="../../assets/vendor/libs/@form-validation/form-validation.css" />
 
     <!-- Page CSS -->
+     <style>
+      
+
+     </style>
 
     <!-- Helpers -->
     <script src="../../assets/vendor/js/helpers.js"></script>
@@ -85,7 +89,7 @@
                           <path fill-rule="evenodd" clip-rule="evenodd" d="M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z" fill="#7367F0"/>
                       </svg>
                   </span>
-                  <span class="app-brand-text demo menu-text fw-bold">PERKOMA LAURENTIUS</span>
+                  <span class="app-brand-text demo menu-text fw-bold">SIKOMA</span>
               </a>
       
               <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -211,195 +215,141 @@
           <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
-
             <div class="container-xxl flex-grow-1 container-p-y">
-              <div class="col-12">
-                <div class="card">
-                  <!-- Header Tabel -->
-                  <div class="card-header d-flex align-items-center justify-content-between">
-                    <div class="card-title mb-0">
-                      <h5 class="m-0 me-2">Daftar Jadwal Pelajaran</h5>
+                <div class="col-12">
+                    <div class="card">
+                        <!-- Header Tabel -->
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <div class="card-title mb-0">
+                                <h5 class="m-0 me-2">Daftar Bintang Peserta</h5>
+                            </div>
+                            <div class="d-flex flex-column flex-md-row gap-4 align-items-center">
+                              <!-- Input Pencarian -->
+                              <input type="text" id="searchInput" class="form-control" placeholder="Cari peserta atau pendamping..." style="max-width: 250px;">
+                              
+                              <button id="addNewBintangBtn" class="btn btn-primary rounded-pill">
+                                <i class="ti ti-plus me-2"></i> Tambah Bintang
+                              </button>
+                            </div>
+                        </div>
+        
+                        <!-- Tabel -->
+                        <div class="card-datatable table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Pertemuan</th>
+                                        <th>Peserta</th>
+                                        <th>Pendamping ID</th>
+                                        <th>Jumlah Bintang</th>
+                                        <th>Bintang Bonus</th>
+                                        <th style="text-align: center;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    <!-- Data akan di-render di sini -->
+                                </tbody>
+                            </table>
+                            <div class="pagination-container d-flex justify-content-between align-items-center p-3"></div>
+
+                        </div>
                     </div>
-                    <div class="d-flex gap-2">
-                      <button id="exportBtn" class="btn btn-label-secondary rounded-pill">
-                        <i class="ti ti-file-export me-2"></i> Export
-                      </button>
-                     
+                </div>
+            </div>
+        
+            <!-- Modal Tambah Bintang -->
+            <div class="modal fade" id="editBintang" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-simple modal-edit-bintang">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div class="text-center mb-6">
+                                <h4 class="mb-2">Tambah Bintang ke Peserta</h4>
+                                <p>Masukkan detail pemberian bintang.</p>
+                            </div>
+                            <form id="editBintangForm" class="row g-3">
+                                <!-- Pilih Pertemuan -->
+                                <div class="col-12">
+                                    <label class="form-label" for="pertemuan_id">Pertemuan</label>
+                                    <select id="pertemuan_id" class="form-control">
+                                        <option value="">Pilih Pertemuan</option>
+                                    </select>
+                                </div>
+                                  <!-- Pendamping ID (Dari LocalStorage) -->
+                                  <div class="col-12">
+                                    <label class="form-label" for="pendamping_id">Pendamping</label>
+                                    <select id="pendamping_id" class="form-control">
+                                        <option value="">Pilih Pendamping</option>
+                                    </select>
+                                </div>
+                                <!-- Pilih Peserta -->
+                                <div class="col-12">
+                                    <label class="form-label" for="peserta_id">Peserta</label>
+                                    <select id="peserta_id" class="form-control">
+                                        <option value="">Pilih Peserta</option>
+                                    </select>
+                                </div>
+        
+                               
+        
+                                <!-- Jumlah Bintang (Opsional) -->
+                                <div class="col-12">
+                                    <label class="form-label" for="jumlah_bintang">Jumlah Bintang</label>
+                                    <input type="number" id="jumlah_bintang" class="form-control" placeholder="Masukkan jumlah bintang (opsional)">
+                                </div>
+        
+                                <!-- Bintang Bonus -->
+                                <div class="col-12">
+                                    <label class="form-label" for="bintang_bonus">Bintang Bonus</label>
+                                    <input type="number" id="bintang_bonus" class="form-control" placeholder="Masukkan jumlah bintang bonus">
+                                </div>
+        
+                                <div class="col-12 text-center">
+                                    <button type="submit" class="btn btn-primary">Tambahkan</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                  </div>
+                </div>
+            </div>
+        </div>
+        
+        
+          
+          
+        </div>
+        
+        
             
-                  <!-- Tabel -->
-                  <div class="card-datatable table-responsive">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>No</th>
-                          <th>ID</th>
-                          <th>Nama Kelas</th>
-                          <th>Nama Mata Pelajaran</th>
-                          <th>Nama Guru</th>
-                          <th>Semester & Tahun Ajaran</th>
-                          <th>Hari</th>
-                          <th>Jam Mulai</th>
-                          <th>Jam Selesai</th>
-                          <th>Aksi</th>
-                      </tr>
-                      </thead>
-                      <tbody id="tableBody">
-                        <!-- Data akan di-render di sini -->
-                      </tbody>
-                    </table>
+          
+            <!-- Toast Container di Body -->
+            <div
+              class="toast-container position-fixed top-0 end-0 p-3"
+              style="z-index: 1050;"
+            >
+              <div
+                class="toast align-items-center text-bg-success border-0"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+                id="toastSuccess"
+              >
+                <div class="d-flex">
+                  <div class="toast-body" id="toastMessage">
+                    <!-- Pesan sukses atau error akan diisi melalui JavaScript -->
                   </div>
+                  <button
+                    type="button"
+                    class="btn-close me-2 m-auto"
+                    data-bs-dismiss="toast"
+                    aria-label="Close"
+                  ></button>
                 </div>
               </div>
             </div>
-            
-            
-            <!-- Offcanvas Form -->
-            <!-- Modal Add User -->
-            <div class="modal fade" id="editSchedule" tabindex="-1" aria-hidden="true" data-mode="add">
-              <div class="modal-dialog modal-lg modal-simple modal-edit-user">
-                <div class="modal-content">
-                  <div class="modal-body">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <div class="text-center mb-6">
-                      <h4 class="mb-2" id="modalTitle">Tambah Jadwal Pelajaran</h4>
-                      <p id="modalDescription">Isi form di bawah ini untuk menambahkan jadwal pelajaran baru.</p>
-                    </div>
-                    <form id="editScheduleForm" class="row g-6">
-                      <!-- Input fields -->
-                      <div class="col-12">
-                        <label class="form-label" for="kelasId">Kelas</label>
-                        <select id="kelasId" name="kelasId" class="form-select">
-                          <option value="">Pilih Kelas</option>
-                          <!-- Options akan diisi melalui JavaScript -->
-                        </select>
-                      </div>
-                      <div class="col-12">
-                        <label class="form-label" for="mataPelajaranId">Mata Pelajaran</label>
-                        <select id="mataPelajaranId" name="mataPelajaranId" class="form-select">
-                          <option value="">Pilih Mata Pelajaran</option>
-                          <!-- Options akan diisi melalui JavaScript -->
-                        </select>
-                      </div>
-                      <div class="col-12">
-                        <label class="form-label" for="teacherId">Guru</label>
-                        <select id="teacherId" name="teacherId" class="form-select">
-                          <option value="">Pilih Guru</option>
-                          <!-- Options akan diisi melalui JavaScript -->
-                        </select>
-                      </div>
-                      <div class="col-12">
-                        <label class="form-label" for="semesterTahunAjaranId">Semester & Tahun Ajaran</label>
-                        <select id="semesterTahunAjaranId" name="semesterTahunAjaranId" class="form-select">
-                          <option value="">Pilih Semester</option>
-                          <!-- Options akan diisi melalui JavaScript -->
-                        </select>
-                      </div>
-                      <div class="col-12">
-                        <label class="form-label" for="hari">Hari</label>
-                        <select id="hari" name="hari" class="form-select">
-                          <option value="">Pilih Hari</option>
-                          <option value="Senin">Senin</option>
-                          <option value="Selasa">Selasa</option>
-                          <option value="Rabu">Rabu</option>
-                          <option value="Kamis">Kamis</option>
-                          <option value="Jumat">Jumat</option>
-                          <option value="Sabtu">Sabtu</option>
-                          <option value="Minggu">Minggu</option>
-                        </select>
-                      </div>
-                      <div class="col-6">
-                        <label class="form-label" for="jamMulai">Jam Mulai</label>
-                        <input
-                          type="time"
-                          id="jamMulai"
-                          name="jamMulai"
-                          class="form-control"
-                          placeholder="Contoh: 10:00:00" />
-                      </div>
-                      <div class="col-6">
-                        <label class="form-label" for="jamSelesai">Jam Selesai</label>
-                        <input
-                          type="time"
-                          id="jamSelesai"
-                          name="jamSelesai"
-                          class="form-control"
-                          placeholder="Contoh: 11:40:00" />
-                      </div>
-                      <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary me-3">Submit</button>
-                        <button
-                          type="reset"
-                          class="btn btn-label-secondary"
-                          data-bs-dismiss="modal"
-                          aria-label="Close">
-                          Cancel
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            
-            
-            
-           
-          <!-- Toast Container di Body -->
-            <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-              <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" id="toastSuccess">
-                  <div class="d-flex">
-                      <div class="toast-body" id="toastMessage">
-                          <!-- Pesan sukses atau error akan diisi melalui JavaScript -->
-                      </div>
-                      <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                  </div>
-              </div>
-            </div>
-
-
-                        <!-- / Content -->
-
-            <!-- Footer -->
-            <footer class="content-footer footer bg-footer-theme">
-              <div class="container-xxl">
-                <div
-                  class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-                  <div class="text-body">
-                    ©
-                    <script>
-                      document.write(new Date().getFullYear());
-                    </script>
-                    , made with ❤️ by <a href="https://pixinvent.com" target="_blank" class="footer-link">Pixinvent</a>
-                  </div>
-                  <div class="d-none d-lg-inline-block">
-                    <a href="https://themeforest.net/licenses/standard" class="footer-link me-4" target="_blank"
-                      >License</a
-                    >
-                    <a href="https://1.envato.market/pixinvent_portfolio" target="_blank" class="footer-link me-4"
-                      >More Themes</a
-                    >
-
-                    <a
-                      href="https://demos.pixinvent.com/vuexy-html-admin-template/documentation/"
-                      target="_blank"
-                      class="footer-link me-4"
-                      >Documentation</a
-                    >
-
-                    <a href="https://pixinvent.ticksy.com/" target="_blank" class="footer-link d-none d-sm-inline-block"
-                      >Support</a
-                    >
-                  </div>
-                </div>
-              </div>
-            </footer>
-            <!-- / Footer -->
-
-            <div class="content-backdrop fade"></div>
           </div>
+          
           <!-- Content wrapper -->
         </div>
         <!-- / Layout page -->
@@ -427,6 +377,9 @@
     <script src="../../assets/vendor/js/menu.js"></script>
     <script type="module" src="../../assets/js/modules/main.js"></script>
     <!-- endbuild -->
+<!-- Tambahkan sebelum script users-peserta.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <!-- Vendors JS -->
     <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>

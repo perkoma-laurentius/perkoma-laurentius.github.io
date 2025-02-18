@@ -56,6 +56,10 @@
     <link rel="stylesheet" href="../../assets/vendor/libs/@form-validation/form-validation.css" />
 
     <!-- Page CSS -->
+     <style>
+      
+
+     </style>
 
     <!-- Helpers -->
     <script src="../../assets/vendor/js/helpers.js"></script>
@@ -85,7 +89,7 @@
                           <path fill-rule="evenodd" clip-rule="evenodd" d="M7.77295 16.3566L23.6563 0H32V6.88383C32 6.88383 31.8262 9.17836 30.6591 10.4057L19.7824 22H13.6938L7.77295 16.3566Z" fill="#7367F0"/>
                       </svg>
                   </span>
-                  <span class="app-brand-text demo menu-text fw-bold">PERKOMA LAURENTIUS</span>
+                  <span class="app-brand-text demo menu-text fw-bold">SIKOMA</span>
               </a>
       
               <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -211,215 +215,75 @@
           <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
-          
             <div class="container-xxl flex-grow-1 container-p-y">
-              <div class="col-12">
-                <div class="card">
-                  <!-- Header Tabel -->
-                  <div class="card-header d-flex align-items-center justify-content-between">
-                    <div class="card-title mb-0">
-                      <h5 class="m-0 me-2">Daftar Siswa</h5>
+                <div class="col-12">
+                    <div class="card">
+                        <!-- Header Tabel -->
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <div class="card-title mb-0">
+                                <h5 class="m-0 me-2">Daftar Peserta dalam Kelompok</h5>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button id="addNewPesertaBtn" class="btn btn-primary rounded-pill">
+                                    <i class="ti ti-plus me-2"></i> Tambah Peserta
+                                </button>
+                            </div>
+                        </div>
+        
+                        <!-- Tabel -->
+                        <div class="card-datatable table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Lengkap</th>
+                                        <th style="text-align: center;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    <!-- Data akan di-render di sini -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="d-flex gap-2">
-                      <button id="exportStudentBtn" class="btn btn-label-secondary rounded-pill">
-                        <i class="ti ti-file-export me-2"></i> Export
-                      </button>
-                      <button id="addNewStudentBtn" class="btn btn-primary rounded-pill">
-                        <i class="ti ti-plus me-2"></i> Tambah Siswa
-                      </button>
-                    </div>
-                  </div>
-          
-                  <!-- Tabel -->
-                  <div class="card-datatable table-responsive">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>No</th>
-                          <th>ID</th>
-                          <th>NIS</th>
-                          <th>Nama Lengkap</th>
-                          <th>Tempat Lahir</th>
-                          <th>Tanggal Lahir</th>
-                          <th>Jenis Kelamin</th>
-                          <th>Agama</th>
-                          <th>No Telepon</th>
-                          <th>Email</th>
-                          <th>Status</th>
-                          <th>Updated At</th>
-                        </tr>
-                      </thead>
-                      <tbody id="tableBody">
-                        <!-- Data akan di-render di sini -->
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
-              </div>
             </div>
-          
-            <!-- Modal Add Student -->
-            <div class="modal fade" id="editStudent" tabindex="-1" aria-hidden="true" data-mode="add">
+        
+            <!-- Modal Tambah Peserta -->
+            <div class="modal fade" id="editPeserta" tabindex="-1" aria-hidden="true">
               <div class="modal-dialog modal-lg modal-simple modal-edit-student">
-                <div class="modal-content">
-                  <div class="modal-body">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <div class="text-center mb-6">
-                      <h4 class="mb-2" id="modalTitle">Tambah Siswa</h4>
-                      <p id="modalDescription">Isi form di bawah ini untuk menambahkan siswa baru.</p>
-                    </div>
-                    <form id="editStudentForm" class="row g-6">
-                      <!-- Email -->
-                      <div class="col-12">
-                        <label class="form-label" for="email">Email</label>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          class="form-control"
-                          placeholder="Masukkan Email"
-                          required
-                        />
+                  <div class="modal-content">
+                      <div class="modal-body">
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          <div class="text-center mb-6">
+                              <h4 class="mb-2">Tambah Peserta ke Kelompok</h4>
+                              <p>Pilih peserta dari daftar yang tersedia.</p>
+                          </div>
+                          <form id="editPesertaForm" class="row g-3">
+                              <!-- Pencarian Peserta -->
+                            <!-- Pencarian Peserta -->
+<div class="col-12">
+  <label class="form-label" for="peserta_search">Cari Peserta</label>
+  <input type="text" id="peserta_search" class="form-control" placeholder="Masukkan nama peserta...">
+  <div id="searchResults" class="autocomplete-results"></div>
+</div>
+
+                              <!-- Pilih Peserta -->
+                              
+          
+                              <div class="col-12 text-center">
+                                  <button type="submit" class="btn btn-primary">Tambahkan</button>
+                              </div>
+                          </form>
                       </div>
-                      <!-- NIS -->
-                      <div class="col-12">
-                        <label class="form-label" for="nis">NIS</label>
-                        <input
-                          type="text"
-                          id="nis"
-                          name="nis"
-                          class="form-control"
-                          placeholder="Masukkan NIS"
-                          required
-                        />
-                      </div>
-                      <!-- Nama Lengkap -->
-                      <div class="col-12">
-                        <label class="form-label" for="namaLengkap">Nama Lengkap</label>
-                        <input
-                          type="text"
-                          id="namaLengkap"
-                          name="namaLengkap"
-                          class="form-control"
-                          placeholder="Masukkan Nama Lengkap"
-                          required
-                        />
-                      </div>
-                      <!-- Tempat Lahir -->
-                      <div class="col-12">
-                        <label class="form-label" for="tempatLahir">Tempat Lahir</label>
-                        <input
-                          type="text"
-                          id="tempatLahir"
-                          name="tempatLahir"
-                          class="form-control"
-                          placeholder="Masukkan Tempat Lahir"
-                          required
-                        />
-                      </div>
-                      <!-- Tanggal Lahir -->
-                      <div class="col-12">
-                        <label class="form-label" for="tanggalLahir">Tanggal Lahir</label>
-                        <input
-                          type="date"
-                          id="tanggalLahir"
-                          name="tanggalLahir"
-                          class="form-control"
-                          required
-                        />
-                      </div>
-                      <!-- Jenis Kelamin -->
-                      <div class="col-12">
-                        <label class="form-label" for="jenisKelamin">Jenis Kelamin</label>
-                        <select id="jenisKelamin" name="jenisKelamin" class="form-select" required>
-                          <option value="">Pilih Jenis Kelamin</option>
-                          <option value="L">Laki-Laki</option>
-                          <option value="P">Perempuan</option>
-                        </select>
-                      </div>
-                      <!-- Agama -->
-                      <div class="col-12">
-                        <label class="form-label" for="agama">Agama</label>
-                        <input
-                          type="text"
-                          id="agama"
-                          name="agama"
-                          class="form-control"
-                          placeholder="Masukkan Agama"
-                          required
-                        />
-                      </div>
-                      <!-- Alamat -->
-                      <div class="col-12">
-                        <label class="form-label" for="alamat">Alamat</label>
-                        <textarea
-                          id="alamat"
-                          name="alamat"
-                          class="form-control"
-                          rows="3"
-                          placeholder="Masukkan Alamat"
-                          required
-                        ></textarea>
-                      </div>
-                      <!-- No Telepon -->
-                      <div class="col-12">
-                        <label class="form-label" for="noTelepon">No. Telepon</label>
-                        <input
-                          type="text"
-                          id="noTelepon"
-                          name="noTelepon"
-                          class="form-control"
-                          placeholder="Masukkan No. Telepon"
-                          required
-                        />
-                      </div>
-                      <!-- Tanggal Masuk -->
-                      <div class="col-12">
-                        <label class="form-label" for="tanggalMasuk">Tanggal Masuk</label>
-                        <input
-                          type="date"
-                          id="tanggalMasuk"
-                          name="tanggalMasuk"
-                          class="form-control"
-                          required
-                        />
-                      </div>
-                      <!-- Status -->
-                      <div class="col-12">
-                        <label class="form-label" for="status">Status</label>
-                        <select id="status" name="status" class="form-select" required>
-                          <option value="Aktif">Aktif</option>
-                          <option value="Nonaktif">Nonaktif</option>
-                        </select>
-                      </div>
-                      <!-- Catatan Khusus -->
-                      <div class="col-12">
-                        <label class="form-label" for="catatanKhusus">Catatan Khusus</label>
-                        <textarea
-                          id="catatanKhusus"
-                          name="catatanKhusus"
-                          class="form-control"
-                          rows="2"
-                          placeholder="Masukkan Catatan Khusus"
-                        ></textarea>
-                      </div>
-                      <!-- Submit -->
-                      <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary me-3">Submit</button>
-                        <button
-                          type="reset"
-                          class="btn btn-label-secondary"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </form>
                   </div>
-                </div>
               </div>
-            </div>
+          </div>
+          
+          
+        </div>
+        
+        
             
           
             <!-- Toast Container di Body -->
@@ -476,6 +340,9 @@
     <script src="../../assets/vendor/js/menu.js"></script>
     <script type="module" src="../../assets/js/modules/main.js"></script>
     <!-- endbuild -->
+<!-- Tambahkan sebelum script users-peserta.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <!-- Vendors JS -->
     <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>

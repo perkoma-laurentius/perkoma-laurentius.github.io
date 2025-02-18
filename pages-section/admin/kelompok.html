@@ -8,7 +8,7 @@
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-  <title>PERKOMA LAURENTIUS - PERSYARATAN NILAI | SISTEM AKADEMIK</title>
+  <title>PERKOMA LAURENTIUS - SISWA | SISTEM AKADEMIK</title>
 
   <meta name="description" content="" />
 
@@ -85,7 +85,7 @@
                   fill="#7367F0" />
               </svg>
             </span>
-            <span class="app-brand-text demo menu-text fw-bold">PERKOMA LAURENTIUS</span>
+            <span class="app-brand-text demo menu-text fw-bold">SIKOMA</span>
           </a>
 
           <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -206,24 +206,21 @@
         <!-- Content wrapper -->
         <div class="content-wrapper">
           <!-- Content -->
-
           <div class="container-xxl flex-grow-1 container-p-y">
             <div class="col-12">
               <div class="card">
                 <!-- Header Tabel -->
                 <div class="card-header d-flex align-items-center justify-content-between">
                   <div class="card-title mb-0">
-                    <h5 class="m-0 me-2">Daftar Jalur Pendaftaran</h5>
+                    <h5 class="m-0 me-2">Kelompok</h5>
                   </div>
-                  <div class="d-flex gap-2">
-                    <button id="exportStudentBtn" class="btn btn-label-secondary rounded-pill">
+                  <div class="d-flex flex-wrap gap-2">
+                    <button id="exportKelompokBtn" class="btn btn-label-secondary rounded-pill">
                       <i class="ti ti-file-export me-2"></i> Export
                     </button>
-                    <button id="addNewRecordBtn" class="btn btn-primary rounded-pill" data-bs-toggle="modal"
-                      data-bs-target="#editJalurPeriode">
-                      <i class="ti ti-plus me-2"></i> Tambah Persyaratan Nilai
+                    <button id="addNewKelompokBtn" class="btn btn-primary rounded-pill">
+                      <i class="ti ti-plus me-2"></i> Tambah Kelompok
                     </button>
-
                   </div>
                 </div>
 
@@ -233,102 +230,90 @@
                     <thead>
                       <tr>
                         <th>No</th>
-                        <th>Nama Jalur</th>
-                        <th>Periode Mulai</th>
-                        <th>Periode Selesai</th>
-                        <th>Deskripsi Jalur</th>
-                        <th>Aksi</th>
-
-
+                        <th>Nama Kelompok</th>
+                        <th>Pendamping</th>
+                        <th>Dibuat</th>
+                        <th style="text-align: center;">Aksi</th>
                       </tr>
                     </thead>
                     <tbody id="tableBody">
                       <!-- Data akan di-render di sini -->
                     </tbody>
                   </table>
+                  <div class="pagination-container d-flex justify-content-between align-items-center p-3"></div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Modal Add Jalur Periode -->
-          <!-- Modal Add Grade Requirement -->
-          <div class="modal fade" id="editGradeRequirement" tabindex="-1" aria-hidden="true" data-mode="add">
-            <div class="modal-dialog modal-lg modal-simple modal-edit-grade-requirement">
+          <!-- Modal Tambah/Edit Kelompok -->
+          <div class="modal fade" id="editKelompok" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-simple modal-edit-kelompok">
               <div class="modal-content">
                 <div class="modal-body">
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   <div class="text-center mb-6">
-                    <h4 class="mb-2" id="modalTitle">Tambah Persyaratan Nilai</h4>
-                    <p id="modalDescription">Isi form di bawah ini untuk menambahkan persyaratan nilai baru.</p>
+                    <h4 class="mb-2" id="modalTitle">Tambah Kelompok</h4>
+                    <p id="modalDescription">Isi form di bawah ini untuk mencatat data kelompok.</p>
                   </div>
-                  <form id="editGradeRequirementForm" class="row g-6">
-                    <!-- Jalur ID -->
+                  <form id="editKelompokForm" class="row g-3">
+                    <!-- Nama Kelompok -->
                     <div class="col-12">
-                      <label class="form-label" for="jalurId">Jalur</label>
-                      <select id="jalurId" name="jalur_id" class="form-select" required>
-                        <option value="">Pilih Jalur</option>
-                        <!-- Option jalur akan diisi melalui JavaScript -->
+                      <label class="form-label" for="nama_kelompok">Nama Kelompok</label>
+                      <input type="text" id="nama_kelompok" class="form-control" placeholder="Masukkan Nama Kelompok" required>
+                    </div>
+                    <!-- Pendamping -->
+                    <div class="col-12">
+                      <label class="form-label" for="pendamping_id">Pendamping</label>
+                      <select id="pendamping_id" name="pendamping_id" class="form-select" required>
+                        <option value="">Pilih Pendamping</option>
                       </select>
-                    </div>
-                    <!-- Nama Mata Pelajaran -->
-                    <div class="col-12">
-                      <label class="form-label" for="subjectName">Nama Mata Pelajaran</label>
-                      <input type="text" id="subjectName" name="subject_name" class="form-control"
-                        placeholder="Masukkan Nama Mata Pelajaran" required />
-                    </div>
-                    <!-- Nilai Minimum -->
-                    <div class="col-12">
-                      <label class="form-label" for="minimumScore">Nilai Minimum</label>
-                      <input type="number" id="minimumScore" name="minimum_score" class="form-control"
-                        placeholder="Masukkan Nilai Minimum" required />
-                    </div>
-                    <!-- Deskripsi -->
-                    <div class="col-12">
-                      <label class="form-label" for="description">Deskripsi</label>
-                      <textarea id="description" name="description" class="form-control" rows="3"
-                        placeholder="Masukkan Deskripsi Persyaratan Nilai"></textarea>
                     </div>
                     <!-- Submit -->
                     <div class="col-12 text-center">
                       <button type="submit" class="btn btn-primary me-3">Submit</button>
-                      <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal" aria-label="Close">
-                        Cancel
-                      </button>
+                      <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal"
+                        aria-label="Close">Cancel</button>
                     </div>
                   </form>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
 
 
 
-          <!-- Toast Container di Body -->
-          <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-            <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
-              aria-atomic="true" id="toastSuccess">
-              <div class="d-flex">
-                <div class="toast-body" id="toastMessage">
-                  <!-- Pesan sukses atau error akan diisi melalui JavaScript -->
-                </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        <!-- Modal Bulk Update -->
+
+
+
+        <!-- Toast Container di Body -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+          <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
+            aria-atomic="true" id="toastSuccess">
+            <div class="d-flex">
+              <div class="toast-body" id="toastMessage">
+                <!-- Pesan sukses atau error akan diisi melalui JavaScript -->
               </div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
           </div>
         </div>
-
-        <!-- Content wrapper -->
       </div>
-      <!-- / Layout page -->
+
+
+      <!-- Content wrapper -->
     </div>
+    <!-- / Layout page -->
+  </div>
 
-    <!-- Overlay -->
-    <div class="layout-overlay layout-menu-toggle"></div>
+  <!-- Overlay -->
+  <div class="layout-overlay layout-menu-toggle"></div>
 
-    <!-- Drag Target Area To SlideIn Menu On Small Screens -->
-    <div class="drag-target"></div>
+  <!-- Drag Target Area To SlideIn Menu On Small Screens -->
+  <div class="drag-target"></div>
   </div>
   <!-- / Layout wrapper -->
 
@@ -346,6 +331,9 @@
   <script src="../../assets/vendor/js/menu.js"></script>
   <script type="module" src="../../assets/js/modules/main.js"></script>
   <!-- endbuild -->
+  <!-- Tambahkan sebelum script users-peserta.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
   <!-- Vendors JS -->
   <script src="../../assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>

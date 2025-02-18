@@ -5,9 +5,9 @@ import { loadAnnouncements } from './announcement.js';
 export function init() {
     console.log("Dashboard Initialized");
     fetchMetrics();
-    loadAnnouncements();
-    loadTeachers();  // Memuat data guru
-    loadStudents();  // Memuat data siswa
+    // loadAnnouncements();
+    // loadTeachers();  // Memuat data guru
+    // loadStudents();  // Memuat data siswa
 
     // Cek token sebelum melanjutkan
     const welcomeText = document.getElementById("welcomeText");
@@ -216,40 +216,40 @@ async function fetchMetrics() {
     try {
         const token = localStorage.getItem('token');
         if (!token) {
+            console.error("Token tidak ditemukan. Harap login terlebih dahulu.");
             return;
         }
 
-        // Call the API to fetch the metrics data
+        // Panggil API untuk mendapatkan data metrics
         const response = await NetworkHelper.get(ENDPOINTS.METRICS.GET_ALL, {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': `Bearer ${token}`
         });
 
+        // Periksa apakah response berhasil
+        if (response.statusCode === 200 && response.message === 'Metrics count berhasil diambil') {
+            // Tampilkan data ke elemen HTML
+            document.getElementById('total-peserta').textContent = response.data.totalPeserta || '0';
+            document.getElementById('total-kakak-pendamping').textContent = response.data.totalPendamping || '0';
+            document.getElementById('total-wali-orang-tua').textContent = response.data.totalOrangTua || '0';
+            document.getElementById('total-pengguna').textContent = response.data.totalPengguna || '0';
 
-        // Check if the response is successful
-        if (response.message === 'Metrics data fetched successfully' && response.data) {
-            // Log the individual values to verify
-     
-
-            // Populate the metrics data into the respective elements
-            document.getElementById('total-kelas').textContent = response.data.kelas || '0';
-            document.getElementById('total-siswa').textContent = response.data.students || '0';
-            document.getElementById('total-guru').textContent = response.data.teachers || '0';
-            document.getElementById('total-admin').textContent = response.data.users || '0';
+            console.log('Metrics berhasil dimuat:', response.data);
         } else {
-            console.error('Failed to fetch metrics data');
+            console.error('Gagal mengambil data metrics:', response.message || 'Unknown error');
         }
     } catch (error) {
         console.error('Error fetching metrics:', error);
     }
 }
 
+
 // Call the function to initialize the dashboard with metrics
 document.addEventListener("DOMContentLoaded", () => {
     fetchMetrics();  // Fetch and display the metrics on page load
-    loadAnnouncements(); // Load announcements on page load
-    loadTeachers(); // Memuat daftar guru ke dalam tabel
-    loadStudents(); // Memuat data siswa ke dalam grafik
+    // loadAnnouncements(); // Load announcements on page load
+    // loadTeachers(); // Memuat daftar guru ke dalam tabel
+    // loadStudents(); // Memuat data siswa ke dalam grafik
 
 });
