@@ -43,9 +43,16 @@ export function init() {
             if (roleId === 2 && response.data.kelompok_pendamping) {
                 localStorage.setItem('kelompok_id', response.data.kelompok_pendamping.id);
                 localStorage.setItem('kelompok_nama', response.data.kelompok_pendamping.nama);
+                
+                // **Tambahkan pendamping_id hanya jika role_id = 2 (Pendamping)**
+                if (response.data.pendamping_id) {
+                    localStorage.setItem('pendamping_id', response.data.pendamping_id);
+                }
             } else {
-                localStorage.removeItem('kelompok_id');  // Hapus jika bukan pendamping
+                // **Hapus data kelompok jika bukan pendamping**
+                localStorage.removeItem('kelompok_id');
                 localStorage.removeItem('kelompok_nama');
+                localStorage.removeItem('pendamping_id'); // Hapus pendamping_id jika bukan pendamping
             }
             // Navigasi berdasarkan role pengguna
             if (roleId === 1) {
