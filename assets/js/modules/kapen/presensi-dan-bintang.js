@@ -55,14 +55,15 @@ export function init() {
                                     <h5 class="card-title">${pertemuan.nama || "Nama Tidak Tersedia"}</h5>
                                     <p class="card-text"><strong>📆 Tanggal:</strong> ${new Date(pertemuan.tanggal).toLocaleDateString()}</p>
                                     <p class="card-text"><strong>📖 Materi:</strong> ${pertemuan.materi || "Tidak Ada Materi"}</p>
-                                    <div class="d-flex justify-content-between">
-                                        <button class="btn btn-primary btn-presensi" data-id="${pertemuan.id}">
-                                            <i class="fas fa-user-check"></i> Presensi
-                                        </button>
-                                        <button class="btn btn-warning btn-bintang" data-id="${pertemuan.id}">
-                                            <i class="fas fa-star"></i> Bintang
-                                        </button>
-                                    </div>
+                                   <div class="d-grid gap-2">
+    <button class="btn btn-primary btn-presensi w-100" data-id="${pertemuan.id}">
+        <i class="fas fa-user-check"></i> Presensi
+    </button>
+    <button class="btn btn-warning btn-bintang w-100" data-id="${pertemuan.id}">
+        <i class="fas fa-star"></i> Bintang
+    </button>
+</div>
+
                                 </div>
                             </div>
                         </div>
