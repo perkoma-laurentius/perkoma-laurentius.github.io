@@ -2,6 +2,7 @@
 import { NetworkHelper } from '../config/networkHelper.js';
 import { navigate } from './main.js';
 import { ENDPOINTS } from '../config/endpoint.js';
+import { showToast } from '../config/toast.js';
 
 export function init() {
     console.log("Auth Login Initialized");
@@ -18,7 +19,7 @@ export function init() {
         const password = document.getElementById('password').value.trim();
 
         if (!login || !password) {
-            alert('Harap isi login (email atau nomor telepon) dan password.');
+            showToast('Harap isi login (email atau nomor telepon) dan password.' , 'danger');
             return;
         }
 
@@ -28,6 +29,7 @@ export function init() {
                 login: login,
                 password: password
             });
+            showToast("Login berhasil!", "success");
 
             console.log('Login Response:', response);
 
@@ -73,7 +75,7 @@ export function init() {
 
             // Tangani jika ada error dari server
             const errorMessage = error.response?.data?.message || 'Login gagal. Silakan periksa login dan password Anda.';
-            alert(errorMessage);
+            showToast(errorMessage, 'danger');
         }
     });
 }
