@@ -21,16 +21,17 @@ export function init() {
         try {
             const response = await NetworkHelper.get(`${ENDPOINTS.PENDAMPING.GET_ALL}?page=1&size=100`);
             pendampingSelect.innerHTML = `<option value="">Pilih Pendamping</option>`;
-
+    
             if (response.statusCode === 200 && response.data.items) {
                 response.data.items.forEach(pendamping => {
+                    const isSelected = String(selectedPendampingId) === String(pendamping.id) ? "selected" : "";
                     pendampingSelect.innerHTML += `
-                        <option value="${pendamping.id}" ${selectedPendampingId == pendamping.id ? "selected" : ""}>
+                        <option value="${pendamping.id}" ${isSelected}>
                             ${pendamping.nama}
                         </option>
                     `;
                 });
-
+    
                 pendampingSelect.disabled = false;
             } else {
                 console.error("Response format invalid:", response);
@@ -41,6 +42,7 @@ export function init() {
             showToast("Terjadi kesalahan saat mengambil data pendamping.", "danger");
         }
     }
+    
 
     /**
      * Fetch daftar kelompok dari server dan render ke dalam tabel
@@ -157,24 +159,90 @@ export function init() {
         }
     }
     
-    
+    /**
+ * Fungsi untuk memperbarui data kelompok
+ */
+async function updateKelompok(id) {
+    const namaKelompokInput = document.getElementById("nama_kelompok");
+    const pendampingSelect = document.getElementById("pendamping_id");
 
-    async function handleEditKelompok(id) {
-        try {
-            const response = await NetworkHelper.get(ENDPOINTS.KELOMPOK.GET_BY_ID(id));
-            if (response.statusCode === 200) {
-                const data = response.data;
-                document.getElementById("nama_kelompok").value = data.nama_kelompok;
-                document.getElementById("pendamping_id").value = data.pendamping_id;
-                kelompokModal.show();
-            } else {
-                showToast("Gagal memuat data kelompok!", "danger");
-            }
-        } catch (error) {
-            showToast("Terjadi kesalahan saat memuat data kelompok.", "danger");
-        }
+    if (!namaKelompokInput) {
+        console.error("Element nama_kelompok tidak ditemukan!");
+        showToast("Terjadi kesalahan: Input nama kelompok tidak ditemukan.", "danger");
+        return;
     }
 
+    const namaKelompok = namaKelompokInput.value.trim();
+    const pendampingId = pendampingSelect.value;
+
+    // Validasi input
+    if (!namaKelompok) {
+        showToast("Nama kelompok tidak boleh kosong!", "warning");
+        return;
+    }
+
+    if (!pendampingId) {
+        showToast("Harap pilih pendamping!", "warning");
+        return;
+    }
+
+    const requestBody = {
+        nama: namaKelompok,
+        pendamping_id: pendampingId
+    };
+
+    try {
+        const response = await NetworkHelper.put(ENDPOINTS.KELOMPOK.UPDATE(id), requestBody);
+        if (response.statusCode === 200) {
+            showToast("Kelompok berhasil diperbarui!", "success");
+            fetchKelompok(); // Refresh data di tabel
+            kelompokModal.hide(); // Tutup modal setelah update berhasil
+        } else {
+            showToast(response.message || "Gagal memperbarui kelompok!", "danger");
+        }
+    } catch (error) {
+        showToast(error.message || "Terjadi kesalahan saat memperbarui kelompok.", "danger");
+    }
+}
+
+/**
+ * Fungsi untuk menangani tombol edit kelompok
+ */
+async function handleEditKelompok(id) {
+    try {
+        const response = await NetworkHelper.get(ENDPOINTS.KELOMPOK.GET_BY_ID(id));
+        if (response.statusCode === 200) {
+            const data = response.data;
+
+            // Reset form sebelum diisi ulang
+            resetForm("edit");
+
+            // Tunggu opsi pendamping dimuat sebelum mengatur nilai dropdown
+            await fetchPendampingOptions(data.pendamping_id);
+
+            // Isi form dengan data kelompok yang diedit
+            document.getElementById("nama_kelompok").value = data.nama_kelompok;
+            document.getElementById("pendamping_id").value = data.pendamping_id;
+
+            // Tampilkan modal
+            kelompokModal.show();
+
+            // Pastikan event onsubmit hanya ditambahkan satu kali
+            editKelompokForm.onsubmit = async (e) => {
+                e.preventDefault();
+                await updateKelompok(id);
+            };
+        } else {
+            showToast("Gagal memuat data kelompok!", "danger");
+        }
+    } catch (error) {
+        showToast("Terjadi kesalahan saat memuat data kelompok.", "danger");
+    }
+}
+
+    
+    
+    
     async function handleDeleteKelompok(id) {
         if (confirm("Apakah Anda yakin ingin menghapus kelompok ini?")) {
             try {

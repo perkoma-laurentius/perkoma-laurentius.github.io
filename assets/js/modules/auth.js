@@ -1,4 +1,3 @@
-// assets/js/auth.js
 import { NetworkHelper } from '../config/networkHelper.js';
 import { navigate } from './main.js';
 import { ENDPOINTS } from '../config/endpoint.js';
@@ -8,32 +7,36 @@ export function init() {
     console.log("Auth Login Initialized");
 
     const loginButton = document.getElementById('loginButton');
-    if (!loginButton) {
-        console.error("Login button not found!");
-        return;
+    const rememberMeCheckbox = document.getElementById('remember-me');
+    const loginInput = document.getElementById('login');
+    const passwordInput = document.getElementById('password');
+
+    // ✅ Cek apakah ada data login yang disimpan di localStorage (email/nomor HP)
+    const savedLogin = localStorage.getItem('remember_login');
+    if (savedLogin) {
+        loginInput.value = decryptData(savedLogin);
+        rememberMeCheckbox.checked = true;
     }
 
     loginButton.addEventListener('click', async () => {
-        // Ambil nilai login dan password dari input
-        const login = document.getElementById('login').value.trim();
-        const password = document.getElementById('password').value.trim();
+        const login = loginInput.value.trim();
+        const password = passwordInput.value.trim();
 
         if (!login || !password) {
-            showToast('Harap isi login (email atau nomor telepon) dan password.' , 'danger');
+            showToast('Harap isi login (email atau nomor telepon) dan password.', 'danger');
             return;
         }
 
         try {
-            // Lakukan request login ke server
             const response = await NetworkHelper.post(ENDPOINTS.AUTH.LOGIN, {
                 login: login,
-                password: password
+                password: password // ✅ Kirim password asli, bcrypt di backend
             });
             showToast("Login berhasil!", "success");
 
             console.log('Login Response:', response);
 
-            // Simpan token dan informasi pengguna ke localStorage
+            // ✅ Simpan informasi pengguna ke localStorage
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('id', response.data.id);
             localStorage.setItem('email', response.data.email);
@@ -45,37 +48,51 @@ export function init() {
             if (roleId === 2 && response.data.kelompok_pendamping) {
                 localStorage.setItem('kelompok_id', response.data.kelompok_pendamping.id);
                 localStorage.setItem('kelompok_nama', response.data.kelompok_pendamping.nama);
-                
-                // **Tambahkan pendamping_id hanya jika role_id = 2 (Pendamping)**
                 if (response.data.pendamping_id) {
                     localStorage.setItem('pendamping_id', response.data.pendamping_id);
                 }
             } else {
-                // **Hapus data kelompok jika bukan pendamping**
                 localStorage.removeItem('kelompok_id');
                 localStorage.removeItem('kelompok_nama');
-                localStorage.removeItem('pendamping_id'); // Hapus pendamping_id jika bukan pendamping
+                localStorage.removeItem('pendamping_id');
             }
-            // Navigasi berdasarkan role pengguna
+
+            // ✅ Simpan login jika "Ingat Saya" dicentang
+            if (rememberMeCheckbox.checked) {
+                localStorage.setItem('remember_login', encryptData(login)); // Bisa email atau nomor HP
+            } else {
+                localStorage.removeItem('remember_login');
+            }
+
             if (roleId === 1) {
-                console.log("Navigating to Admin Dashboard");
                 navigate('DASHBOARDADMIN');
             } else if (roleId === 2) {
-                console.log("Navigating to KAKAKPENDAMPING Dashboard");
                 navigate('DASHBOARDKAKAKPENDAMPING');
-            } else if (roleId === 0) {
-                console.log("Navigating to ERROR404LOGIN Dashboard");
-                navigate('ERROR404LOGIN');
             } else {
-                console.log("Navigating to Default Dashboard");
                 navigate('ERROR404LOGIN');
             }
         } catch (error) {
             console.error('Login Failed:', error);
-
-            // Tangani jika ada error dari server
             const errorMessage = error.response?.data?.message || 'Login gagal. Silakan periksa login dan password Anda.';
             showToast(errorMessage, 'danger');
         }
     });
+}
+
+/**
+ * ✅ Fungsi untuk mengenkripsi data (misal: login untuk Remember Me)
+ * @param {string} data - Data yang akan dienkripsi
+ * @returns {string} - Data dalam format Base64
+ */
+function encryptData(data) {
+    return btoa(unescape(encodeURIComponent(data))); // Menangani karakter khusus
+}
+
+/**
+ * ✅ Fungsi untuk mendekripsi data yang disimpan
+ * @param {string} data - Data terenkripsi
+ * @returns {string} - Data asli
+ */
+function decryptData(data) {
+    return decodeURIComponent(escape(atob(data))); // Menangani karakter khusus
 }
