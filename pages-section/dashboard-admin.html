@@ -322,83 +322,32 @@
 
                 <div class="col-xxl-6 col-lg-7">
                   <div class="card h-100">
-                      <div class="card-header d-flex align-items-center justify-content-between">
-                          <div class="card-title mb-0">
-                              <h5 class="mb-1">Statistik Kenaikan Bintang Peserta</h5>
-                              <p class="card-subtitle">Periode: Januari - Desember 2024</p>
-                          </div>
-                          <div class="btn-group">
-                              <button type="button" class="btn btn-label-primary" id="monthButton">Januari</button>
-                              <button type="button" class="btn btn-label-primary dropdown-toggle dropdown-toggle-split"
-                                      data-bs-toggle="dropdown" aria-expanded="false">
-                                  <span class="visually-hidden">Toggle Dropdown</span>
-                              </button>
-                              <ul class="dropdown-menu">
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="0">Januari</a></li>
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="1">Februari</a></li>
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="2">Maret</a></li>
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="3">April</a></li>
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="4">Mei</a></li>
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="5">Juni</a></li>
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="6">Juli</a></li>
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="7">Agustus</a></li>
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="8">September</a></li>
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="9">Oktober</a></li>
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="10">November</a></li>
-                                  <li><a class="dropdown-item" href="javascript:void(0);" data-month="11">Desember</a></li>
-                              </ul>
-                          </div>
+                    <div
+                      class="card-header d-flex align-items-center justify-content-between"
+                    >
+                      <div class="card-title mb-0">
+                        <h5 class="mb-1">Statistik Kenaikan Bintang Peserta</h5>
+                        <p class="card-subtitle">
+                          Periode: Januari - Desember 2024
+                        </p>
                       </div>
-                      <div class="card-body">
-                          <!-- Chart Container -->
-                          <canvas id="studentGrowthChart" style="height: 300px;"></canvas>
+                    </div>
+                    <div class="card-body">
+                      <!-- Chart Container -->
+                      <div
+                        class="chart-container"
+                        style="width: 90%; max-width: 800px; margin: auto"
+                      >
+                        <canvas id="bintangChart"></canvas>
                       </div>
+                    </div>
                   </div>
-              </div>
+                </div>
+
               
                
                 <!-- Daftar Guru Terbaru -->
-                <div class="col-12 order-5">
-                  <div class="card">
-                      <div class="card-header d-flex align-items-center justify-content-between">
-                          <div class="card-title mb-0">
-                              <h5 class="m-0 me-2">Daftar Peserta Terbaru</h5>
-                          </div>
-                          <div class="dropdown">
-                              <button
-                                  class="btn btn-text-secondary rounded-pill text-muted border-0 p-2 me-n1"
-                                  type="button"
-                                  id="newTeachers"
-                                  data-bs-toggle="dropdown"
-                                  aria-haspopup="true"
-                                  aria-expanded="false">
-                                  <i class="ti ti-dots-vertical ti-md text-muted"></i>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="newTeachers">
-                                  <a class="dropdown-item" href="javascript:void(0);">Lihat Semua</a>
-                                  <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="card-datatable table-responsive">
-                          <table class="dt-new-teachers table table-sm">
-                              <thead>
-                                  <tr>
-                                      <th>#</th>
-                                      <th>Nama Peserta</th>
-                                      <th>Email</th>
-                                      <th>No Hp</th>
-                                      <th>Tanggal Bergabung</th>
-                                      <th>Status</th>
-                                  </tr>
-                              </thead>
-                              <tbody>
-                                  <!-- Baris data guru akan ditambahkan di sini oleh JavaScript -->
-                              </tbody>
-                          </table>
-                      </div>
-                  </div>
-              </div>
+                
               
                 <!--/ Daftar Guru Terbaru -->
 

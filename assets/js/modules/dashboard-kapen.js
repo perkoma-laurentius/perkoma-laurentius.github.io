@@ -7,7 +7,7 @@ export function init() {
     fetchMetrics();
     loadAnnouncements();
     loadTeachers();  // Memuat data guru
-    loadStudents();  // Memuat data siswa
+    loadBintangTop15();  // Memuat data siswa
 
     // Cek token sebelum melanjutkan
     const welcomeText = document.getElementById("welcomeText");
@@ -74,10 +74,7 @@ function renderTeacherTable(teachers) {
     });
 }
 
-/**
- * Function untuk memuat data siswa ke dalam grafik
- */
-async function loadStudents() {
+async function loadBintangTop15() {
     try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -85,165 +82,180 @@ async function loadStudents() {
             return;
         }
 
-        // Memanggil API untuk mengambil data siswa
-        const response = await NetworkHelper.get(ENDPOINTS.STUDENTS.GET_STUDENTS, {
+        const response = await NetworkHelper.get(ENDPOINTS.BINTANG.BINTANG_TOP15, {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': `Bearer ${token}`
         });
 
-        console.log(response); // Log response untuk memeriksa struktur data
+        console.log(response); // Debugging untuk melihat response dari API
 
-        // Cek apakah response berhasil dan memiliki 'items' di dalamnya
-        if (response.message === 'Students retrieved successfully' && response.items) {
-            renderStudentGrowthChart(response.items); // Render grafik berdasarkan data siswa
+        if (response.statusCode === 200 && response.data) {
+            renderBintangChart(response.data); // Panggil fungsi untuk menampilkan grafik
         } else {
-            console.error('Failed to fetch students data');
+            console.error('Failed to fetch bintang data');
         }
     } catch (error) {
-        console.error('Error fetching students:', error);
+        console.error('Error fetching bintang:', error);
     }
 }
 
+// Panggil fungsi saat halaman dimuat
+document.addEventListener('DOMContentLoaded', loadBintangTop15);
+function renderBintangChart(data) {
+    if (!data || data.length === 0) {
+        console.warn("Tidak ada data bintang untuk ditampilkan.");
+        return;
+    }
 
-/**
- * Function untuk render grafik statistik kenaikan siswa
- * @param {Array} students - Data siswa dari API
- */
-function renderStudentGrowthChart(students) {
-    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-    const studentsPerMonth = new Array(12).fill(0); // Untuk menghitung siswa per bulan
+    // Ambil nama peserta dan total bintangnya
+    const labels = data.map(item => item.nama);
+    const bintangValues = data.map(item => parseInt(item.total_bintang)); // Konversi data ke angka
 
-    // Menghitung jumlah siswa per bulan
-    students.forEach(student => {
-        const month = new Date(student.tanggal_masuk).getMonth(); // Mendapatkan bulan dari tanggal masuk
-        studentsPerMonth[month] += 1; // Tambahkan 1 untuk setiap siswa yang masuk pada bulan tersebut
+    // Buat warna gradien untuk setiap batang grafik
+    const canvas = document.getElementById('bintangChart');
+    const ctx = canvas.getContext('2d');
+    const gradientColors = labels.map((_, index) => {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, `hsl(${index * 40}, 80%, 60%)`);
+        gradient.addColorStop(1, `hsl(${index * 40}, 70%, 40%)`);
+        return gradient;
     });
 
-    // Data untuk chart
-    const data = {
-        labels: months, // Bulan-bulan
+    // Data untuk Chart.js
+    const chartData = {
+        labels: labels,
         datasets: [{
-            label: 'Jumlah Siswa',
-            data: studentsPerMonth, // Data jumlah siswa per bulan
-            borderColor: 'rgba(75, 192, 192, 1)',  // Warna garis grafik
-            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Warna area bawah garis
-            fill: true, // Mengisi area di bawah garis
-            tension: 0.4 // Kelengkungan garis
+            label: 'Total Bintang',
+            data: bintangValues,
+            backgroundColor: gradientColors, // Warna batang gradien
+            borderColor: 'rgba(0, 0, 0, 0.2)',
+            borderWidth: 2,
+            hoverBackgroundColor: 'rgba(255, 206, 86, 0.8)',
+            barThickness: 40,
+            borderRadius: 8
         }]
     };
 
-    // Opsi grafik
     const options = {
         responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    stepSize: 1,
-                    callback: function(value) {
-                        return value.toFixed(0); // Pastikan angka bulat
+        maintainAspectRatio: false,
+        layout: {
+            padding: {
+                top: 30 // 🟢 Tambahkan padding agar angka tidak keluar dari chart
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                backgroundColor: '#222',
+                titleFont: { size: 14, weight: 'bold' },
+                bodyFont: { size: 14 },
+                callbacks: {
+                    label: function (tooltipItem) {
+                        let peserta = labels[tooltipItem.dataIndex];
+                        let total = bintangValues[tooltipItem.dataIndex];
+                        return ` 👤 ${peserta} ⭐ ${total} Bintang`;
                     }
                 }
             }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                suggestedMax: Math.max(...bintangValues) + 5, // 🟢 Tambahkan ruang di atas
+                ticks: {
+                    stepSize: 1,
+                    font: { size: 14, weight: 'bold' },
+                    color: '#555'
+                },
+                grid: {
+                    color: "rgba(200, 200, 200, 0.3)",
+                    borderDash: [5, 5]
+                }
+            },
+            x: {
+                ticks: {
+                    font: { size: 14, weight: 'bold' },
+                    color: '#333'
+                },
+                grid: {
+                    display: false
+                }
+            }
+        },
+        animation: {
+            duration: 1500,
+            easing: "easeInOutQuart"
         }
     };
 
-    const canvas = document.getElementById('studentGrowthChart');
-    if (canvas) {
-        const ctx = canvas.getContext('2d'); // Mendapatkan context 2D
-        const studentGrowthChart = new Chart(ctx, {
-            type: 'line', // Tipe grafik: garis
-            data: data,
-            options: options
-        });
-
-        // Event listener untuk dropdown
-        const dropdownItems = document.querySelectorAll('.dropdown-item');
-        dropdownItems.forEach(item => {
-            item.addEventListener('click', (event) => {
-                const selectedMonth = parseInt(event.target.getAttribute('data-month'));  // Ambil bulan yang dipilih
-                const monthData = new Array(12).fill(0); // Reset data bulan
-
-                // Set data untuk bulan yang dipilih
-                monthData[selectedMonth] = studentsPerMonth[selectedMonth]; // Set jumlah siswa untuk bulan yang dipilih
-                studentGrowthChart.data.datasets[0].data = monthData; // Update data grafik dengan data bulan yang dipilih
-                studentGrowthChart.update();  // Render ulang grafik
-
-                // Ubah teks pada tombol dropdown
-                const monthButton = document.getElementById('monthButton');
-                monthButton.textContent = months[selectedMonth]; // Tampilkan bulan yang dipilih
-            });
-        });
-    } else {
-        console.error("Canvas element not found!");
+    // Jika ada chart sebelumnya, hapus
+    if (window.bintangChartInstance) {
+        window.bintangChartInstance.destroy();
     }
-}
 
-/**
- * Function untuk update period based on students' data
- * @param {Array} students - Data siswa dari API
- */
-function updatePeriod(students) {
-    let startDate = null;
-    let endDate = null;
+    // Buat grafik baru
+    window.bintangChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: chartData,
+        options: options,
+        plugins: [{
+            id: 'datalabels',
+            afterDatasetsDraw(chart) {
+                const { ctx } = chart;
+                chart.data.datasets.forEach((dataset, i) => {
+                    const meta = chart.getDatasetMeta(i);
+                    meta.data.forEach((bar, index) => {
+                        const value = dataset.data[index];
 
-    // Tentukan start date dan end date berdasarkan tanggal_masuk
-    students.forEach(student => {
-        const studentDate = new Date(student.tanggal_masuk); // Convert to Date object
-        if (!startDate || studentDate < startDate) {
-            startDate = studentDate;
-        }
-        if (!endDate || studentDate > endDate) {
-            endDate = studentDate;
-        }
+                        ctx.fillStyle = 'black'; // 🟢 Warna font lebih kontras
+                        ctx.font = 'bold 16px Arial';
+                        ctx.textAlign = 'center';
+
+                        // 🟢 Pastikan angka berada sedikit di atas batang
+                        ctx.fillText(value, bar.x, bar.y - 15);
+                    });
+                });
+            }
+        }]
     });
-
-    let period = 'No data for period';
-    if (startDate && endDate) {
-        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-        period = `${months[startDate.getMonth()]} - ${months[endDate.getMonth()]} ${endDate.getFullYear()}`;
-    }
-
-    // Update the period in the card subtitle
-    const periodElement = document.querySelector('.card-subtitle');
-    if (periodElement) {
-        periodElement.textContent = `Periode: ${period}`; // Set the period in the subtitle
-    }
 }
+
+
 // Function to fetch and update the metrics data
 async function fetchMetrics() {
     try {
         const token = localStorage.getItem('token');
         if (!token) {
+            console.error("Token tidak ditemukan. Harap login terlebih dahulu.");
             return;
         }
 
-        // Call the API to fetch the metrics data
+        // Panggil API untuk mendapatkan data metrics
         const response = await NetworkHelper.get(ENDPOINTS.METRICS.GET_ALL, {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': `Bearer ${token}`
         });
 
+        // Periksa apakah response berhasil
+        if (response.statusCode === 200 && response.message === 'Metrics count berhasil diambil') {
+            // Tampilkan data ke elemen HTML
+            document.getElementById('total-peserta').textContent = response.data.totalPeserta || '0';
+            document.getElementById('total-kakak-pendamping').textContent = response.data.totalPendamping || '0';
 
-        // Check if the response is successful
-        if (response.message === 'Metrics data fetched successfully' && response.data) {
-            // Log the individual values to verify
-     
-
-            // Populate the metrics data into the respective elements
-            document.getElementById('total-kelas').textContent = response.data.kelas || '0';
-            document.getElementById('total-siswa').textContent = response.data.students || '0';
-            document.getElementById('total-guru').textContent = response.data.teachers || '0';
-            document.getElementById('total-admin').textContent = response.data.users || '0';
+            console.log('Metrics berhasil dimuat:', response.data);
         } else {
-            console.error('Failed to fetch metrics data');
+            console.error('Gagal mengambil data metrics:', response.message || 'Unknown error');
         }
     } catch (error) {
         console.error('Error fetching metrics:', error);
     }
 }
+
 
 // Call the function to initialize the dashboard with metrics
 document.addEventListener("DOMContentLoaded", () => {

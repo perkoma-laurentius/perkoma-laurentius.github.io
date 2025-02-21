@@ -113,7 +113,7 @@ export const pageScripts = {
     },
     DASHBOARDKAKAKPENDAMPING: {
         fileName: 'pages-section/dashboard-kapen.html',
-        script: '/assets/js/modules/ppdb/dashboard-kapen.js'
+        script: '/assets/js/modules/dashboard-kapen.js'
     },
 
 
