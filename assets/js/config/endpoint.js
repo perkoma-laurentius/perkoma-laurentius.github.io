@@ -100,9 +100,11 @@ export const ENDPOINTS = {
         GET_STAR_FROM_PESERTA : (id) => `/api/bintang/peserta/${id}`,
         CREATE: '/api/bintang',
         DELETE: '/api/bintang',
-        GET_BY_KELOMPOK: (kelompok_id) => `/api/bintang/kelompok/${kelompok_id}`
+        GET_BY_KELOMPOK: (kelompok_id) => `/api/bintang/kelompok/${kelompok_id}`,
+        BINTANG_TOP15: '/api/bintang/total',
 
 
     }
+    
  
 };
