@@ -50,6 +50,52 @@ export function init() {
     }
   }
 
+  document.getElementById("downloadTemplateBtn").addEventListener("click", generateBulkUpdateTemplate);
+
+  function generateBulkUpdateTemplate() {
+    const data = [
+        ['Nama Lengkap', 'Email', 'No. Telepon', 'Alamat', 'Jenis Kelamin (L/P)', 'Tanggal Lahir (YYYY-MM-DD)'], // Header
+        ['Siti Aisyah', 'siti@example.com', '081234567890', 'Jl. Merdeka No. 123', 'P', '1995-02-15'],
+        ['Joko Susanto', 'joko@example.com', '081298765432', 'Jl. Sudirman No. 45', 'L', '1990-05-20'],
+        ['Luna Maya', 'luna@example.com', '085285982722', 'Jl. Mangga No. 3', 'P', '1988-10-10']
+    ];
+
+    // Buat worksheet dari data
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+    // Buat workbook baru
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Bulk Update Template');
+
+    // Buat file Excel dan trigger unduhan
+    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+
+    // Konversi string ke array buffer
+    function s2ab(s) {
+        const buf = new ArrayBuffer(s.length);
+        const view = new Uint8Array(buf);
+        for (let i = 0; i < s.length; i++) {
+            view[i] = s.charCodeAt(i) & 0xFF;
+        }
+        return buf;
+    }
+
+    // Konversi ke Blob untuk unduhan
+    const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+
+    // Trigger unduhan
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'template-bulk-update.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // Bersihkan URL Blob
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+}
+
   /**
    * Perbarui data pendamping
    */
@@ -154,10 +200,7 @@ export function init() {
                                           pendamping.email || "Tidak Tersedia"
                                         }</td>
 
-                    <td>${
-                      new Date(pendamping.updated_at).toLocaleDateString() ||
-                      "Tidak Tersedia"
-                    }</td>
+                    
                     <td>
                         <button class="btn btn-sm btn-primary me-2 edit-btn" data-id="${
                           pendamping.id
