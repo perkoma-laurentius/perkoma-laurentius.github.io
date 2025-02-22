@@ -242,13 +242,13 @@
                         <tr>
                           <th>No</th>
                           <th>Nama Lengkap</th>
-                          <th>Alamat</th>
+                          <th>Nama Panggilan</th>
+                          <th>Sekolah</th>
+                          <th>Kelas</th>
                           <th>Tanggal Lahir</th>
                           <th>Jenis Kelamin</th>
-                          <th>No Telepon</th>
-                          <th>Email</th>
-                          <th>Updated At</th>
                         </tr>
+                        
                       </thead>
                       <tbody id="tableBody">
                         <!-- Data akan di-render di sini -->
@@ -260,101 +260,102 @@
             </div>
             
             <!-- Modal Tambah Peserta -->
-            <div class="modal fade" id="editPeserta" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog modal-lg modal-simple modal-edit-student">
-                <div class="modal-content">
-                  <div class="modal-body">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <div class="text-center mb-6">
-                      <h4 class="mb-2" id="modalTitle">Tambah Peserta</h4>
-                      <p id="modalDescription">Isi form di bawah ini untuk menambahkan peserta baru.</p>
-                    </div>
-                    <form id="editPesertaForm" class="row g-3">
-                      <!-- Nama Lengkap -->
-                      <div class="col-12">
-                        <label class="form-label" for="nama">Nama Lengkap</label>
-                        <input
-                          type="text"
-                          id="nama"
-                          name="nama"
-                          class="form-control"
-                          placeholder="Masukkan Nama Lengkap"
-                          required
-                        />
-                      </div>
-                      <!-- Email -->
-                      <div class="col-12">
-                        <label class="form-label" for="email">Email</label>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          class="form-control"
-                          placeholder="Masukkan Email"
-                          required
-                        />
-                      </div>
-                      <!-- Alamat -->
-                      <div class="col-12">
-                        <label class="form-label" for="alamat">Alamat</label>
-                        <textarea
-                          id="alamat"
-                          name="alamat"
-                          class="form-control"
-                          rows="3"
-                          placeholder="Masukkan Alamat"
-                          required
-                        ></textarea>
-                      </div>
-                      <!-- Tanggal Lahir -->
-                      <div class="col-12">
-                        <label class="form-label" for="tanggal_lahir">Tanggal Lahir</label>
-                        <input
-                          type="date"
-                          id="tanggal_lahir"
-                          name="tanggal_lahir"
-                          class="form-control"
-                          required
-                        />
-                      </div>
-                      <!-- Jenis Kelamin -->
-                      <div class="col-12">
-                        <label class="form-label" for="gender">Jenis Kelamin</label>
-                        <select id="gender" name="gender" class="form-select" required>
-                          <option value="">Pilih Jenis Kelamin</option>
-                          <option value="L">Laki-Laki</option>
-                          <option value="P">Perempuan</option>
-                        </select>
-                      </div>
-                      <!-- No Telepon -->
-                      <div class="col-12">
-                        <label class="form-label" for="no_hp">No. Telepon</label>
-                        <input
-                          type="text"
-                          id="no_hp"
-                          name="no_hp"
-                          class="form-control"
-                          placeholder="Masukkan No. Telepon"
-                          required
-                        />
-                      </div>
-                      <!-- Submit -->
-                      <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary me-3">Submit</button>
-                        <button
-                          type="reset"
-                          class="btn btn-label-secondary"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
+<div class="modal fade" id="editPeserta" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-simple modal-edit-student">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="text-center mb-6">
+          <h4 class="mb-2" id="modalTitle">Tambah Peserta</h4>
+          <p id="modalDescription">Isi form di bawah ini untuk menambahkan peserta baru.</p>
+        </div>
+        <form id="editPesertaForm" class="row g-3">
+          <!-- Nama Lengkap -->
+          <div class="col-12">
+            <label class="form-label" for="nama">Nama Lengkap</label>
+            <input
+              type="text"
+              id="nama"
+              name="nama"
+              class="form-control"
+              placeholder="Masukkan Nama Lengkap"
+              required
+            />
+          </div>
+          <!-- Nama Panggilan -->
+          <div class="col-12">
+            <label class="form-label" for="nama_panggilan">Nama Panggilan</label>
+            <input
+              type="text"
+              id="nama_panggilan"
+              name="nama_panggilan"
+              class="form-control"
+              placeholder="Masukkan Nama Panggilan"
+              required
+            />
+          </div>
+          <!-- Sekolah -->
+          <div class="col-12">
+            <label class="form-label" for="sekolah">Sekolah</label>
+            <input
+              type="text"
+              id="sekolah"
+              name="sekolah"
+              class="form-control"
+              placeholder="Masukkan Nama Sekolah"
+              required
+            />
+          </div>
+          <!-- Kelas -->
+          <div class="col-12">
+            <label class="form-label" for="kelas">Kelas</label>
+            <input
+              type="text"
+              id="kelas"
+              name="kelas"
+              class="form-control"
+              placeholder="Masukkan Kelas"
+              required
+            />
+          </div>
+          <!-- Tanggal Lahir -->
+          <div class="col-12">
+            <label class="form-label" for="tanggal_lahir">Tanggal Lahir</label>
+            <input
+              type="date"
+              id="tanggal_lahir"
+              name="tanggal_lahir"
+              class="form-control"
+              required
+            />
+          </div>
+          <!-- Jenis Kelamin -->
+          <div class="col-12">
+            <label class="form-label" for="gender">Jenis Kelamin</label>
+            <select id="gender" name="gender" class="form-select" required>
+              <option value="">Pilih Jenis Kelamin</option>
+              <option value="L">Laki-Laki</option>
+              <option value="P">Perempuan</option>
+            </select>
+          </div>
+          <!-- Submit -->
+          <div class="col-12 text-center">
+            <button type="submit" class="btn btn-primary me-3">Submit</button>
+            <button
+              type="reset"
+              class="btn btn-label-secondary"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
             
 
 

@@ -44,30 +44,29 @@ export function init() {
             showToast("Terjadi kesalahan saat mengambil data peserta.", "danger");
         }
     }
+/**
+ * Render data peserta ke dalam tabel
+ * @param {Array} data - Data peserta dari API
+ */
+function renderTable(data) {
+    tableBody.innerHTML = "";
 
-    /**
-     * Render data peserta ke dalam tabel
-     * @param {Array} data - Data peserta dari API
-     */
-    function renderTable(data) {
-        tableBody.innerHTML = "";
+    data.forEach((peserta, index) => {
+        const row = `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${peserta.nama || "Tidak Tersedia"}</td>
+                <td>${peserta.nama_panggilan || "Tidak Tersedia"}</td>
+                <td>${peserta.sekolah || "Tidak Tersedia"}</td>
+                <td>${peserta.kelas || "Tidak Tersedia"}</td>
+                <td>${new Date(peserta.tanggal_lahir).toLocaleDateString() || "Tidak Tersedia"}</td>
+                <td>${peserta.gender === "P" ? "Perempuan" : "Laki-Laki"}</td>
+            </tr>
+        `;
+        tableBody.insertAdjacentHTML("beforeend", row);
+    });
+}
 
-        data.forEach((peserta, index) => {
-            const row = `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${peserta.nama || "Tidak Tersedia"}</td>
-                    <td>${peserta.tempat_lahir || "Tidak Tersedia"}</td>
-                    <td>${new Date(peserta.tanggal_lahir).toLocaleDateString() || "Tidak Tersedia"}</td>
-                    <td>${peserta.gender === "P" ? "Perempuan" : "Laki-Laki"}</td>
-                    <td>${peserta.no_hp || "Tidak Tersedia"}</td>
-                    <td>${peserta.User?.email || "Tidak Tersedia"}</td>
-                    <td>${new Date(peserta.updated_at).toLocaleDateString() || "Tidak Tersedia"}</td>
-                </tr>
-            `;
-            tableBody.insertAdjacentHTML("beforeend", row);
-        });
-    }
 
     /**
      * Render navigasi pagination
@@ -104,79 +103,120 @@ export function init() {
         paginationContainer.appendChild(pageInfo);
         paginationContainer.appendChild(nextBtn);
     }
-
     /**
-     * Tambah peserta baru
-     */
-    async function createPeserta() {
-        const requestBody = {
-            nama: document.getElementById("nama").value.trim(),
-            no_hp: document.getElementById("no_hp").value.trim(),
-            email: document.getElementById("email").value.trim(),
-            alamat: document.getElementById("alamat").value.trim(),
-            gender: document.getElementById("gender").value.trim(),
-            tanggal_lahir: document.getElementById("tanggal_lahir").value.trim(),
-        };
+ * Tambah peserta baru
+ */
+async function createPeserta() {
+    const requestBody = {
+        nama: document.getElementById("nama").value.trim(),
+        nama_panggilan: document.getElementById("nama_panggilan").value.trim(),
+        sekolah: document.getElementById("sekolah").value.trim(),
+        kelas: document.getElementById("kelas").value.trim(),
+        gender: document.getElementById("gender").value.trim(),
+        tanggal_lahir: document.getElementById("tanggal_lahir").value.trim(),
+    };
 
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                showToast('Token tidak ditemukan. Harap login kembali.', 'danger');
-                return;
-            }
-
-            const response = await NetworkHelper.post(ENDPOINTS.STUDENTS.CREATE_STUDENTS, requestBody, {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token}`
-            });
-
-            if (response.statusCode === 201) {
-                showToast("Peserta berhasil ditambahkan!", "success");
-                fetchPeserta(); // Refresh data peserta
-                document.getElementById("editPesertaForm").reset(); // Reset form
-                const addPesertaModal = bootstrap.Modal.getInstance(document.getElementById("editPeserta"));
-                addPesertaModal.hide();
-            } else {
-                console.error("Gagal menambahkan peserta:", response.message);
-                showToast(response.message || "Gagal menambahkan peserta!", "danger");
-            }
-        } catch (error) {
-            console.error("Error adding peserta:", error);
-            showToast("Terjadi kesalahan saat menambahkan peserta.", "danger");
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showToast('Token tidak ditemukan. Harap login kembali.', 'danger');
+            return;
         }
-    }
-    function parseFileContent(file, content) {
-        const extension = file.name.split('.').pop().toLowerCase();
-    
-        if (extension === 'csv') {
-            const rows = content.split('\n').slice(1); // Skip header row
-            const parsedData = rows.map((row) => {
-                const [nama, email, no_hp, alamat, gender, tanggal_lahir] = row.split(',');
-                return { nama, email, no_hp, alamat, gender, tanggal_lahir: tanggal_lahir.trim() };
-            });
-            console.log('Parsed CSV Data:', parsedData);
-            return parsedData;
-        } else if (extension === 'xlsx') {
-            try {
-                const workbook = XLSX.read(content, { type: 'binary' });
-                const sheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false });
-                console.log('Parsed XLSX Data:', jsonData);
-                return jsonData;
-            } catch (error) {
-                console.error('Error parsing XLSX file:', error);
-                showToast('Gagal membaca file XLSX. Pastikan format file valid.', 'danger');
-                return [];
-            }
+
+        const response = await NetworkHelper.post(ENDPOINTS.STUDENTS.CREATE_STUDENTS, requestBody, {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+        });
+
+        // **Jika peserta berhasil ditambahkan**
+        if (response.statusCode === 201 && response.success !== false) {
+            showToast("Peserta berhasil ditambahkan!", "success");
+            fetchPeserta(); // Refresh data peserta
+
+            // Reset form dan tutup modal
+            document.getElementById("editPesertaForm").reset();
+            const addPesertaModal = bootstrap.Modal.getInstance(document.getElementById("editPeserta"));
+            if (addPesertaModal) addPesertaModal.hide();
+
         } else {
-            showToast('Format file tidak didukung. Gunakan file CSV atau XLSX.', 'danger');
+            console.error("Gagal menambahkan peserta:", response.message);
+            showToast(response.message || "Gagal menambahkan peserta!", "danger");
+        }
+    } catch (error) {
+        console.error("Error adding peserta:", error);
+        showToast("Terjadi kesalahan saat menambahkan peserta.", "danger");
+    }
+}
+function parseFileContent(file, content) {
+    const extension = file.name.split('.').pop().toLowerCase();
+
+    if (extension === 'csv') {
+        const rows = content.split('\n').slice(1); // Skip header row
+        const parsedData = rows.map((row) => {
+            const columns = row.split(',').map((col) => col.trim()); // Trim spaces
+            
+            if (columns.length < 6) {
+                console.warn('Skipping invalid row:', row);
+                return null;
+            }
+
+            const [nama, nama_panggilan, sekolah, kelas, gender, tanggal_lahir] = columns;
+
+            return {
+                nama,
+                nama_panggilan,
+                sekolah,
+                kelas,
+                gender: gender.toUpperCase() === 'P' ? 'P' : 'L', // Pastikan tetap 'P' atau 'L'
+                tanggal_lahir,
+            };
+        }).filter(row => row !== null); // Hapus baris kosong atau invalid
+
+        console.log('Parsed CSV Data:', parsedData);
+        return parsedData;
+    
+    } else if (extension === 'xlsx') {
+        try {
+            const workbook = XLSX.read(content, { type: 'binary' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: false });
+
+            const parsedData = jsonData.map((row) => {
+                const {
+                    nama = "",
+                    nama_panggilan = "",
+                    sekolah = "",
+                    kelas = "",
+                    gender = "",
+                    tanggal_lahir = "",
+                } = row;
+
+                return {
+                    nama,
+                    nama_panggilan,
+                    sekolah,
+                    kelas,
+                    gender: gender.toUpperCase() === 'P' ? 'P' : 'L', // Pastikan tetap 'P' atau 'L'
+                    tanggal_lahir,
+                };
+            });
+
+            console.log('Parsed XLSX Data:', parsedData);
+            return parsedData;
+        } catch (error) {
+            console.error('Error parsing XLSX file:', error);
+            showToast('Gagal membaca file XLSX. Pastikan format file valid.', 'danger');
             return [];
         }
+    
+    } else {
+        showToast('Format file tidak didukung. Gunakan file CSV atau XLSX.', 'danger');
+        return [];
     }
-    
-    
+}
+
     
 /**
  * Baca file sebagai teks
@@ -198,6 +238,7 @@ function readFileAsText(file) {
         reader.readAsText(file);
     });
 }
+
 async function bulkUploadPeserta() {
     const fileInput = document.getElementById("fileUpload");
     const file = fileInput.files[0];

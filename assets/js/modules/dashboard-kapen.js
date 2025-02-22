@@ -99,8 +99,6 @@ async function loadBintangTop15() {
         console.error('Error fetching bintang:', error);
     }
 }
-
-// Panggil fungsi saat halaman dimuat
 document.addEventListener('DOMContentLoaded', loadBintangTop15);
 function renderBintangChart(data) {
     if (!data || data.length === 0) {
@@ -108,121 +106,77 @@ function renderBintangChart(data) {
         return;
     }
 
-    // Ambil nama peserta dan total bintangnya
+    // Ambil nama peserta dan total bintang
     const labels = data.map(item => item.nama);
-    const bintangValues = data.map(item => parseInt(item.total_bintang)); // Konversi data ke angka
+    const bintangValues = data.map(item => parseInt(item.total_bintang));
 
-    // Buat warna gradien untuk setiap batang grafik
     const canvas = document.getElementById('bintangChart');
     const ctx = canvas.getContext('2d');
-    const gradientColors = labels.map((_, index) => {
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, `hsl(${index * 40}, 80%, 60%)`);
-        gradient.addColorStop(1, `hsl(${index * 40}, 70%, 40%)`);
-        return gradient;
-    });
 
-    // Data untuk Chart.js
-    const chartData = {
-        labels: labels,
-        datasets: [{
-            label: 'Total Bintang',
-            data: bintangValues,
-            backgroundColor: gradientColors, // Warna batang gradien
-            borderColor: 'rgba(0, 0, 0, 0.2)',
-            borderWidth: 2,
-            hoverBackgroundColor: 'rgba(255, 206, 86, 0.8)',
-            barThickness: 40,
-            borderRadius: 8
-        }]
-    };
-
-    const options = {
-        responsive: true,
-        maintainAspectRatio: false,
-        layout: {
-            padding: {
-                top: 30 // 🟢 Tambahkan padding agar angka tidak keluar dari chart
-            }
-        },
-        plugins: {
-            legend: {
-                display: false
-            },
-            tooltip: {
-                backgroundColor: '#222',
-                titleFont: { size: 14, weight: 'bold' },
-                bodyFont: { size: 14 },
-                callbacks: {
-                    label: function (tooltipItem) {
-                        let peserta = labels[tooltipItem.dataIndex];
-                        let total = bintangValues[tooltipItem.dataIndex];
-                        return ` 👤 ${peserta} ⭐ ${total} Bintang`;
-                    }
-                }
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                suggestedMax: Math.max(...bintangValues) + 5, // 🟢 Tambahkan ruang di atas
-                ticks: {
-                    stepSize: 1,
-                    font: { size: 14, weight: 'bold' },
-                    color: '#555'
-                },
-                grid: {
-                    color: "rgba(200, 200, 200, 0.3)",
-                    borderDash: [5, 5]
-                }
-            },
-            x: {
-                ticks: {
-                    font: { size: 14, weight: 'bold' },
-                    color: '#333'
-                },
-                grid: {
-                    display: false
-                }
-            }
-        },
-        animation: {
-            duration: 1500,
-            easing: "easeInOutQuart"
-        }
-    };
-
-    // Jika ada chart sebelumnya, hapus
+    // Bersihkan chart lama jika ada
     if (window.bintangChartInstance) {
         window.bintangChartInstance.destroy();
     }
 
-    // Buat grafik baru
+    // Deteksi jika layar kecil (HP)
+    const isMobile = window.innerWidth < 768;
+    const barThickness = isMobile ? 15 : 30; // ✅ Ukuran batang lebih kecil di HP
+
     window.bintangChartInstance = new Chart(ctx, {
         type: 'bar',
-        data: chartData,
-        options: options,
-        plugins: [{
-            id: 'datalabels',
-            afterDatasetsDraw(chart) {
-                const { ctx } = chart;
-                chart.data.datasets.forEach((dataset, i) => {
-                    const meta = chart.getDatasetMeta(i);
-                    meta.data.forEach((bar, index) => {
-                        const value = dataset.data[index];
-
-                        ctx.fillStyle = 'black'; // 🟢 Warna font lebih kontras
-                        ctx.font = 'bold 16px Arial';
-                        ctx.textAlign = 'center';
-
-                        // 🟢 Pastikan angka berada sedikit di atas batang
-                        ctx.fillText(value, bar.x, bar.y - 15);
-                    });
-                });
+        data: {
+            labels: labels, // ✅ Tetap pakai labels, tapi disembunyikan di X
+            datasets: [{
+                label: 'Total Bintang',
+                data: bintangValues,
+                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                hoverBackgroundColor: 'rgba(255, 159, 64, 0.8)',
+                barPercentage: isMobile ? 0.6 : 0.8,
+                categoryPercentage: isMobile ? 0.7 : 0.9,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }, // ✅ Sembunyikan legenda
+                tooltip: {
+                    enabled: true, // ✅ Tampilkan hanya saat hover
+                    backgroundColor: '#333',
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 14 },
+                    callbacks: {
+                        title: function (tooltipItems) {
+                            let index = tooltipItems[0].dataIndex;
+                            return `👤 ${labels[index]}`; // ✅ Tampilkan nama di hover
+                        },
+                        label: function (tooltipItem) {
+                            return `⭐ ${tooltipItem.raw} Bintang`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: Math.max(...bintangValues) + 3,
+                    ticks: { stepSize: 1, font: { size: 14 }, color: '#555' },
+                    grid: { color: "rgba(200, 200, 200, 0.3)", borderDash: [5, 5] }
+                },
+                x: {
+                    ticks: {
+                        display: false // ✅ Sembunyikan nama di sumbu X
+                    },
+                    grid: { display: false }
+                }
             }
-        }]
+        }
     });
 }
+
 
 
 // Function to fetch and update the metrics data
