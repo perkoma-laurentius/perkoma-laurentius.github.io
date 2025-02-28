@@ -241,10 +241,10 @@ function renderBintang(bintangList) {
             `;
         } else if (kategori === "misa") {
             deskripsiContainer.innerHTML = `
-                <label for="deskripsiBintang">Deskripsi Bintang</label>
-                <input type="text" id="deskripsiBintang" class="form-control" placeholder="Isi deskripsi misa...">
+        <input type="hidden" id="deskripsiBintang" value="Misa">
             `;
         }
+        
     
         jumlahBintangInput.removeAttribute("disabled");
     
