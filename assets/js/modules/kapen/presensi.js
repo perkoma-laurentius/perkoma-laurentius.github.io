@@ -71,12 +71,7 @@ function renderAbsensi(absensiList) {
             <button class="btn btn-danger btn-sm status-btn" data-peserta="${absensi.peserta_id}" data-pertemuan="${absensi.pertemuan_id}" data-status="Tidak Hadir">
                 ❌ Tidak Hadir
             </button>
-            <button class="btn btn-warning btn-sm status-btn" data-peserta="${absensi.peserta_id}" data-pertemuan="${absensi.pertemuan_id}" data-status="Sakit">
-                🏥 Sakit
-            </button>
-            <button class="btn btn-info btn-sm status-btn" data-peserta="${absensi.peserta_id}" data-pertemuan="${absensi.pertemuan_id}" data-status="Izin">
-                📜 Izin
-            </button>
+          
         `;
 
         if (absensi.status_absensi !== "Belum Absen") {
@@ -93,7 +88,7 @@ function renderAbsensi(absensiList) {
         const cardHTML = `
             <div class="col-md-4 peserta-card" data-name="${absensi.nama_peserta.toLowerCase()}">
                 <div class="card shadow-sm p-3 mb-3">
-                    <h5 class="fw-bold">${absensi.nama_peserta}</h5>
+                    <h5 class="fw-bold">${absensi.nama_panggilan}</h5>
                     <p class="text-muted">${absensi.nama_pertemuan} - ${new Date(absensi.tanggal_pertemuan).toLocaleDateString()}</p>
                     <div class="d-flex flex-wrap gap-2">${actionButtons}</div>
                 </div>
@@ -130,10 +125,30 @@ function filterPeserta(searchTerm) {
 }
 
 /**
- * Update Status Absensi
+ * Menampilkan modal loading
+ */
+function showLoadingModal() {
+    const modal = new bootstrap.Modal(document.getElementById("loadingModal"));
+    modal.show();
+}
+
+/**
+ * Menyembunyikan modal loading
+ */
+function hideLoadingModal() {
+    const modalEl = document.getElementById("loadingModal");
+    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+    if (modalInstance) {
+        modalInstance.hide();
+    }
+}
+/**
+ * Update Status Absensi dengan modal loading
  */
 async function updateStatus(pesertaId, pertemuanId, status) {
     try {
+        showLoadingModal(); // ✅ Tampilkan modal sebelum request
+
         const requestBody = { pertemuan_id: pertemuanId, peserta_id: pesertaId, status: status };
         const response = await NetworkHelper.post(ENDPOINTS.ABSENSI.CREATE, requestBody);
 
@@ -143,9 +158,12 @@ async function updateStatus(pesertaId, pertemuanId, status) {
         } else {
             showToast("❌ Gagal mengupdate absensi!", "danger");
         }
+
     } catch (error) {
         console.error("❌ Error updating absensi:", error);
         showToast("⚠️ Terjadi kesalahan saat mengupdate absensi.", "danger");
+    } finally {
+        hideLoadingModal(); // ✅ Sembunyikan modal setelah request selesai
     }
 }
 

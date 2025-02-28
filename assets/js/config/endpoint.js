@@ -101,8 +101,10 @@ export const ENDPOINTS = {
         CREATE: '/api/bintang',
         DELETE: '/api/bintang',
         GET_BY_KELOMPOK: (kelompok_id) => `/api/bintang/kelompok/${kelompok_id}`,
-        BINTANG_TOP15: '/api/bintang/total',
-
+        BINTANG_TOP15: '/api/bintang/totaltop15',
+        GETBINTANG_BY_KELOMPOK: (kelompok_id, page = 1, size = 15) => 
+        `/api/bintang/total?id_kelompok=${kelompok_id}&page=${page}&size=${size}`
+        
 
     }
     
