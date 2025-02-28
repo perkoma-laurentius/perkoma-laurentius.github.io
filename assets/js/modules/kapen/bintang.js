@@ -137,27 +137,34 @@ function renderBintang(bintangList) {
         const jumlahBintangDisabled = bintang.total_jumlah_bintang?.total !== "0";
 
         const cardHTML = `
-            <div class="col-md-4">
-                <div class="card shadow-sm p-3 mb-3">
-                    <h5 class="fw-bold">${bintang.nama_panggilan_peserta}</h5>
-                    <p class="text-muted">${bintang.nama_peserta}</p>
-                    
-                    <div class="mb-2">
-                        <label class="form-label">Jumlah Bintang</label>
-                        <input type="number" class="form-control jumlah-bintang" 
-                            data-peserta="${bintang.peserta_id}" 
-                            value="${bintang.total_jumlah_bintang?.total || 0}" 
-                            ${jumlahBintangDisabled}>
-                    </div>
+           <div class="col-md-4">
+    <div class="card shadow-sm p-3 mb-3">
+        <h5 class="fw-bold text-center">${bintang.nama_panggilan_peserta}</h5>
+        <p class="text-muted text-center">${bintang.nama_peserta}</p>
 
-                    <div class="mb-2">
-                        <label class="form-label">Bintang Bonus</label>
-                        <input type="number" class="form-control bintang-bonus" 
-                            data-peserta="${bintang.peserta_id}" 
-                            value="${bintang.total_bintang_bonus?.total || 0}">
-                    </div>
-                </div>
-            </div>
+        <button class="btn btn-sm btn-primary w-100 detail-bintang-btn mb-2"
+            data-peserta="${bintang.peserta_id}">
+            Detail Bintang
+        </button>
+
+        <div class="mb-2">
+            <label class="form-label">Jumlah Bintang</label>
+            <input type="number" class="form-control jumlah-bintang" 
+                data-peserta="${bintang.peserta_id}" 
+                value="${bintang.total_jumlah_bintang?.total || 0}" 
+                ${jumlahBintangDisabled}>
+        </div>
+
+        <div class="mb-2">
+            <label class="form-label">Bintang Bonus</label>
+            <input type="number" class="form-control bintang-bonus" 
+                data-peserta="${bintang.peserta_id}" 
+                value="${bintang.total_bintang_bonus?.total || 0}">
+        </div>
+    </div>
+</div>
+
+
         `;
 
         listContainer.insertAdjacentHTML("beforeend", cardHTML);
@@ -176,6 +183,20 @@ function renderBintang(bintangList) {
             modal.show();
         });
     });
+    document.querySelectorAll(".detail-bintang-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            let pesertaId = this.getAttribute("data-peserta");
+    
+            // Cari data peserta berdasarkan ID
+            let peserta = bintangList.find(p => p.peserta_id == pesertaId);
+            if (peserta) {
+                tampilkanDetailBintang(peserta);
+            } else {
+                showToast("❌ Data peserta tidak ditemukan!", "danger");
+            }
+        });
+    });
+    
     
     document.querySelectorAll(".bintang-bonus").forEach(input => {
         input.addEventListener("focus", function () {
@@ -236,6 +257,62 @@ function renderBintang(bintangList) {
             }
         }, 100);
     });
+
+    function tampilkanDetailBintang(peserta) {
+        let modalContent = document.getElementById("modalDetailContent");
+    
+        if (!modalContent) {
+            console.error("❌ Element modalDetailContent tidak ditemukan!");
+            return;
+        }
+    
+        // Mulai dengan header peserta
+        let detailHTML = `
+            <h5 class="text-center">${peserta.nama_panggilan_peserta}</h5>
+            <p class="text-center text-muted">${peserta.nama_peserta}</p>
+            <hr>
+            <h6>Total Bintang: ${peserta.total_jumlah_bintang.total}</h6>
+            <h6>Total Bintang Bonus: ${peserta.total_bintang_bonus.total}</h6>
+            <h6>Total Semua: ${peserta.total_semua}</h6>
+            <hr>
+        `;
+    
+        // Menampilkan detail bintang per kategori
+        if (peserta.total_jumlah_bintang.detail.length > 0) {
+            detailHTML += `<h6>Detail Bintang:</h6><ul class="list-group mb-3">`;
+            peserta.total_jumlah_bintang.detail.forEach(bintang => {
+                detailHTML += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        ${bintang.deskripsi} (${bintang.kategori})
+                        <span class="badge bg-primary rounded-pill">${bintang.jumlah}</span>
+                    </li>
+                `;
+            });
+            detailHTML += `</ul>`;
+        }
+    
+        // Menampilkan detail bintang bonus
+        if (peserta.total_bintang_bonus.detail.length > 0) {
+            detailHTML += `<h6>Bintang Bonus:</h6><ul class="list-group mb-3">`;
+            peserta.total_bintang_bonus.detail.forEach(bonus => {
+                detailHTML += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        ${bonus.deskripsi} (${bonus.kategori})
+                        <span class="badge bg-warning rounded-pill">${bonus.jumlah}</span>
+                    </li>
+                `;
+            });
+            detailHTML += `</ul>`;
+        }
+    
+        // Masukkan ke dalam modal
+        modalContent.innerHTML = detailHTML;
+    
+        // Tampilkan modal
+        let modal = new bootstrap.Modal(document.getElementById("detailBintangModal"));
+        modal.show();
+    }
+    
     document.getElementById("saveJumlahBintang").addEventListener("click", function () {
         let pesertaId = document.getElementById("kategoriBintang").getAttribute("data-peserta");
         const urlParams = new URLSearchParams(window.location.search);
@@ -406,6 +483,7 @@ async function updateBintang(pesertaId, pertemuanId, jumlahBintang, kategoriBint
         showToast("⚠️ Terjadi kesalahan saat menyimpan bintang.", "danger");
     }
 }
+
 
 
 // function updateTotalBintang(pesertaId, jumlahBintangBaru) {
