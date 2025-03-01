@@ -79,8 +79,9 @@ export const ENDPOINTS = {
         CREATE: "/api/absensi",
         UPDATE: (id) => `/api/absensi/${id}`,
         DELETE: (id) => `/api/absensi/${id}`,
-        GET_BY_KELOMPOK: (kelompok_id, page = 1, size = 20) => 
-            `/api/absensi/kelompok/${kelompok_id}?page=${page}&size=${size}`
+        GET_BY_KELOMPOK: (kelompok_id, pertemuan_id, page = 1, size = 20) => 
+            `/api/absensi/kelompok/${kelompok_id}?pertemuan_id=${pertemuan_id}&page=${page}&size=${size}`
+        
         
     },
     KELOMPOK: {

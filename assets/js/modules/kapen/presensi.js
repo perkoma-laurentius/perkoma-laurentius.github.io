@@ -8,6 +8,8 @@ import { navigate } from '../../modules/main.js';
  */
 export function init() {
     console.log("✅ presensi.js loaded successfully");
+    const urlParams = new URLSearchParams(window.location.search);
+    const pertemuanId = urlParams.get("pertemuanId");
 
     const kelompokId = localStorage.getItem("kelompok_id");
     if (!kelompokId) {
@@ -28,18 +30,27 @@ export function init() {
         });
     }
 
-    fetchAbsensiByKelompok(kelompokId);
+    fetchAbsensiByKelompok(kelompokId, pertemuanId);
 }
-
-/**
- * Fetch data absensi peserta berdasarkan kelompok
- */
-async function fetchAbsensiByKelompok(kelompokId) {
+async function fetchAbsensiByKelompok(kelompokId, pertemuanId = null, page = 1, size = 15) {
     try {
-        const response = await NetworkHelper.get(ENDPOINTS.ABSENSI.GET_BY_KELOMPOK(kelompokId));
+        // Ambil ulang pertemuanId dari URL jika tidak ada di parameter
+        if (!pertemuanId) {
+            const urlParams = new URLSearchParams(window.location.search);
+            pertemuanId = urlParams.get("pertemuanId");  // ✅ Pastikan pakai underscore `_`
+        }
+
+        if (!pertemuanId) {
+            showToast("❌ Pertemuan tidak ditemukan!", "danger");
+            return;
+        }
+
+        const url = ENDPOINTS.ABSENSI.GET_BY_KELOMPOK(kelompokId, pertemuanId, page, size);
+        const response = await NetworkHelper.get(url);
 
         if (response.statusCode === 200 && response.data) {
             renderAbsensi(response.data.items);
+            renderPagination(response.data.pagination, kelompokId, pertemuanId);
         } else {
             showToast("❌ Gagal mengambil data absensi!", "danger");
         }
@@ -185,7 +196,7 @@ function renderPagination(pagination, kelompokId, term) {
         prevBtn.disabled = !pagination.urls.prev;
         prevBtn.addEventListener("click", () => {
             if (pagination.urls.prev) {
-                fetchAbsensiByKelompok(kelompokId, pagination.currentPage - 1, 5, term);
+                fetchAbsensiByKelompok(kelompokId, pertemuanId, pagination.currentPage - 1);
             }
         });
 
@@ -198,7 +209,7 @@ function renderPagination(pagination, kelompokId, term) {
         nextBtn.disabled = !pagination.urls.next;
         nextBtn.addEventListener("click", () => {
             if (pagination.urls.next) {
-                fetchAbsensiByKelompok(kelompokId, pagination.currentPage + 1, 5, term);
+                fetchAbsensiByKelompok(kelompokId, pertemuanId, pagination.currentPage + 1);
             }
         });
 
