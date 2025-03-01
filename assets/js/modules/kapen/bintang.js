@@ -10,6 +10,9 @@ export function init() {
 
     const kelompokId = localStorage.getItem("kelompok_id"); 
     const pendampingId = localStorage.getItem("id"); 
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const pertemuanId = urlParams.get("pertemuanId");
 
     if (!kelompokId) {
         showToast("❌ Kelompok tidak ditemukan!", "danger");
@@ -20,8 +23,13 @@ export function init() {
         showToast("❌ Pendamping tidak ditemukan. Silakan login ulang!", "danger");
         return;
     }
+    if (!pertemuanId) {
+        showToast("❌ Pertemuan ID tidak ditemukan dalam URL!", "danger");
+        return;
+    }
 
-    fetchBintangByKelompok(kelompokId);
+    console.log(`📌 Memuat data untuk Kelompok ID: ${kelompokId}, Pertemuan ID: ${pertemuanId}`);
+    fetchBintangByKelompok(kelompokId,pertemuanId);
 
     // Event listener untuk pencarian dengan debounce
     let debounceTimeout;
@@ -58,7 +66,7 @@ function hideLoadingModal() {
 /**
  * Fetch data bintang peserta berdasarkan kelompok dengan pagination
  */
-async function fetchBintangByKelompok(kelompokId, pertemuanId = null, page = 1, size = 10) {
+async function fetchBintangByKelompok(kelompokId, pertemuanId, page = 1, size = 10) {
     try {
         // 1. Ambil semua peserta dalam kelompok
         const pesertaResponse = await NetworkHelper.get(ENDPOINTS.BINTANG.GET_BY_KELOMPOK(kelompokId));
@@ -542,7 +550,7 @@ function renderPagination(pagination, kelompokId) {
         nextBtn.disabled = !pagination.urls.next;
         nextBtn.addEventListener("click", () => {
             if (pagination.urls.next) {
-                fetchBintangByKelompok(kelompokId, pagination.currentPage + 1);
+                fetchBintangByKelompok(kelompokId, pertemuanId,pagination.currentPage + 1);
             }
         });
 
