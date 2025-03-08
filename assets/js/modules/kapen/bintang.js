@@ -30,6 +30,21 @@ export function init() {
 
     console.log(`📌 Memuat data untuk Kelompok ID: ${kelompokId}, Pertemuan ID: ${pertemuanId}`);
     fetchBintangByKelompok(kelompokId,pertemuanId);
+    
+    document.getElementById("kategoriBintang").addEventListener("change", function () {
+        const kategori = this.value;
+        const jumlahBintangModal = document.getElementById("jumlahBintangModal");
+        const bintangPokokModal = document.getElementById("bintangPokokModal");
+    
+        if (kategori === "pokok") {
+            // Sembunyikan modal jumlah bintang dan tampilkan modal bintang pokok
+            if (jumlahBintangModal) bootstrap.Modal.getInstance(jumlahBintangModal).hide();
+            fetchBintangPokokTabel(kelompokId, pertemuanId);
+            let modal = new bootstrap.Modal(bintangPokokModal);
+            modal.show();
+        }
+    });
+      
 
     // Event listener untuk pencarian dengan debounce
     let debounceTimeout;
@@ -44,6 +59,249 @@ export function init() {
         });
     }
 }
+
+const masterPokok = [
+    { pokok: 1, hlm: [23, 24, 25], keterangan: "Aku Bersama Keluarga", due: "22-Feb" },
+    { pokok: 2, hlm: [26, 27, 28], keterangan: "Makan Bersama Menyenangkan", due: "22-Feb" },
+    { pokok: 3, hlm: [31, 32, 33], keterangan: "Yesus Memanggil Anak-anak", due: "8-Mar" },
+    { pokok: 4, hlm: [34, 35, 36], keterangan: "Yesus Mencari Sahabat-sahabat-Nya", due: "8-Mar" },
+    { pokok: 5, hlm: [37, 38], keterangan: "Yesus Memanggil 12 Rasul", due: "8-Mar" },
+    { pokok: 6, hlm: [40, 41, 42], keterangan: "Yesus Memberi Makan Orang Banyak", due: "16-Mar" },
+    { pokok: 7, hlm: [44, 45], keterangan: "Yesus Akan Memberi Roti Kehidupan", due: "22-Mar" },
+    { pokok: 8, hlm: [48, 49], keterangan: "Yesus Memberi Roti Kehidupan", due: "22-Mar" },
+    { pokok: 9, hlm: [51, 52, 53], keterangan: "Yesus Membasuh Kaki Sahabat-sahabatnya", due: "12-Apr" },
+    { pokok: 10, hlm: [55, 56], keterangan: "Kasih dengan Bukti Perbuatan", due: "12-Apr" },
+    { pokok: 11, hlm: [58, 59], keterangan: "Kasih terhadap Orang yang Tidak Kita Senangi", due: "26-Apr" },
+    { pokok: 12, hlm: [61, 62, 63], keterangan: "Bekerja", due: "26-Apr" },
+    { pokok: 13, hlm: [64, 65], keterangan: "Yesus Bersama Kita", due: "3-May" },
+    { pokok: 14, hlm: [67, 69], keterangan: "Menyambut Tubuh Kristus", due: "3-May" },
+    { pokok: 15, hlm: [70, 71, 72], keterangan: "Bagian-bagian Perayaan Ekaristi", due: "18-May" }
+];
+
+async function fetchBintangPokokTabel(kelompokId, pertemuanId) {
+    try {
+        // 🔥 Ambil daftar peserta dari kelompok (API kelompok)
+        const pesertaResponse = await NetworkHelper.get(ENDPOINTS.BINTANG.GET_BY_KELOMPOK(kelompokId));
+        if (!pesertaResponse || pesertaResponse.statusCode !== 200 || !pesertaResponse.data.items) {
+            console.error("❌ Gagal mengambil peserta kelompok!", pesertaResponse);
+            showToast("❌ Gagal mengambil peserta kelompok!", "danger");
+            return;
+        }
+        const pesertaList = pesertaResponse.data.items; // ✅ Simpan daftar peserta
+
+        // 🔥 Ambil data bintang dari total peserta yang hadir (API total bintang)
+        const bintangResponse = await NetworkHelper.get(ENDPOINTS.BINTANG.GETBINTANG_BY_KELOMPOK(kelompokId, 1, 15));
+        if (!bintangResponse || bintangResponse.statusCode !== 200 || !bintangResponse.data.items || !bintangResponse.data.items.peserta) {
+            console.error("❌ Gagal mengambil data bintang pokok!", bintangResponse);
+            showToast("❌ Gagal mengambil data bintang pokok!", "danger");
+            return;
+        }
+        const bintangList = bintangResponse.data.items.peserta; // ✅ Simpan daftar peserta yang mendapat bintang
+
+        // 🔥 Cocokkan peserta dari API kelompok dengan API total bintang
+        pesertaList.forEach((peserta) => {
+            const foundPeserta = bintangList.find(b => b.peserta_id === peserta.peserta_id);
+            if (foundPeserta) {
+                peserta.total_jumlah_bintang = foundPeserta.total_jumlah_bintang;
+                peserta.total_bintang_bonus = foundPeserta.total_bintang_bonus;
+                peserta.total_semua = foundPeserta.total_semua;
+            } else {
+                peserta.total_jumlah_bintang = { total: "0", detail: [] };
+                peserta.total_bintang_bonus = { total: "0", detail: [] };
+                peserta.total_semua = "0";
+            }
+        });
+
+        // 🔥 Render tabel dengan peserta_id yang benar
+        renderBintangPokokTable(pesertaList, pertemuanId);
+    } catch (error) {
+        console.error("❌ Error fetching bintang pokok:", error);
+        showToast("⚠️ Terjadi kesalahan saat mengambil data bintang pokok.", "danger");
+    }
+}
+
+
+const urlParams = new URLSearchParams(window.location.search);
+const pertemuanId = urlParams.get("pertemuanId");
+function renderBintangPokokTable(bintangList, kelompokId, pertemuanId) {
+    const tableContainer = document.getElementById("bintangPokokTable");
+    if (!tableContainer) {
+        console.error("❌ Element bintangPokokTable tidak ditemukan!");
+        return;
+    }
+    tableContainer.innerHTML = "";
+
+    let tableHTML = `
+        <table class="table table-striped table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Pokok</th>
+                    <th>Hlm</th>
+                    <th>Keterangan</th>
+                    <th>Due</th>
+                    <th>DONE</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    masterPokok.forEach((pokok) => {
+        let firstRow = true;
+
+        // 🔥 Cek apakah ada peserta yang sudah memiliki bintang untuk pokok ini
+        let isDone = bintangList.some(peserta => 
+            peserta.total_jumlah_bintang.detail.some(detail => 
+                detail.kategori.toLowerCase() === "pokok" && detail.deskripsi === `Pokok ${pokok.pokok}`
+            )
+        );
+        let peserta = bintangList.find(p => 
+            !p.total_jumlah_bintang.detail.some(detail => 
+                detail.kategori.toLowerCase() === "pokok" && detail.deskripsi === `Pokok ${pokok.pokok}`
+            )
+        );
+
+       let pesertaId = peserta ? peserta.peserta_id : 0;
+
+        tableHTML += `
+            <tr>
+                <td rowspan="${pokok.hlm.length}">${pokok.pokok}</td>
+                <td>${pokok.hlm[0]}</td>
+                <td rowspan="${pokok.hlm.length}">${pokok.keterangan}</td>
+                <td rowspan="${pokok.hlm.length}">${pokok.due}</td>
+                <td rowspan="${pokok.hlm.length}">
+                    <button class="btn btn-success btn-lg btn-done" 
+                        data-pokok="${pokok.pokok}" 
+                        data-peserta="${pesertaId}"
+                        data-pertemuan="${pertemuanId}" 
+                        ${isDone ? "disabled" : ""}>✅</button>
+                </td>
+            </tr>
+        `;
+
+        // 🔥 Loop halaman tanpa membuat row tambahan untuk pokok
+        for (let i = 1; i < pokok.hlm.length; i++) {
+            tableHTML += `
+                <tr>
+                    <td>${pokok.hlm[i]}</td>
+                </tr>
+            `;
+        }
+    });
+
+    tableHTML += "</tbody></table>";
+    tableContainer.innerHTML = tableHTML;
+
+    // 🎯 Tambahkan event listener untuk tombol checklist
+    setupChecklistEventListeners();
+}
+
+/**
+ * Reset form setelah pengiriman bintang berhasil
+ */
+function resetForm() {
+    const kategoriBintang = document.getElementById("kategoriBintang");
+    const deskripsiContainer = document.getElementById("deskripsiContainer");
+    const jumlahBintangInput = document.getElementById("jumlahBintangInput");
+
+    if (kategoriBintang) kategoriBintang.value = "";
+    if (deskripsiContainer) deskripsiContainer.innerHTML = "";
+    if (jumlahBintangInput) jumlahBintangInput.value = "";
+}
+
+/**
+ * Setup event listener untuk tombol checklist
+ */
+function setupChecklistEventListeners() {
+    document.querySelectorAll(".btn-done").forEach(button => {
+        button.addEventListener("click", async function () {
+            const pokokId = parseInt(this.getAttribute("data-pokok"));
+            const pesertaId = this.getAttribute("data-peserta");
+            const urlParams = new URLSearchParams(window.location.search);
+            const kelompokId = localStorage.getItem("kelompok_id");
+            const pertemuanId = urlParams.get("pertemuanId");
+            const pendampingId = localStorage.getItem("pendamping_id");
+
+            if (!pendampingId || !pesertaId || !pertemuanId) {
+                showToast("❌ Data tidak lengkap, harap refresh halaman!", "danger");
+                return;
+            }
+
+            // 🔥 Cari due date berdasarkan pokokId
+            const pokok = masterPokok.find(p => p.pokok === pokokId);
+            if (!pokok) {
+                showToast("❌ Pokok tidak ditemukan!", "danger");
+                return;
+            }
+
+            // 🔥 Hitung jumlah bintang berdasarkan tanggal due
+            const jumlahBintang = hitungJumlahBintang(pokok.due);
+
+            const requestData = {
+                pendamping_id: parseInt(pendampingId),
+                bintang_list: [
+                    {
+                        pertemuan_id: pertemuanId,
+                        peserta_id: pesertaId,
+                        jumlah_bintang: jumlahBintang,
+                        kategori_bintang: "pokok",
+                        deskripsi: `Pokok ${pokokId}`
+                    }
+                ]
+            };
+
+            try {
+                showLoadingModal();
+                const response = await NetworkHelper.post(ENDPOINTS.BINTANG.CREATE, requestData);
+
+                if (response.statusCode === 201) {
+                    showToast(`✅ Bintang berhasil dikirim (${jumlahBintang} bintang)!`, "success");
+                    this.setAttribute("disabled", "true"); // Disable button setelah berhasil
+                    this.innerHTML = "✔"; // Ubah tampilan tombol
+                    fetchBintangPokokTabel(kelompokId, pertemuanId); // Reload table
+                    fetchBintangByKelompok(kelompokId, pertemuanId); // Reload bintang
+                    resetForm();
+
+                } else {
+                    showToast("❌ Gagal mengirim bintang!", "danger");
+                }
+            } catch (error) {
+                console.error("❌ Error saat mengirim bintang:", error);
+                showToast("⚠️ Terjadi kesalahan, coba lagi.", "danger");
+            } finally {
+                hideLoadingModal();
+            }
+        });
+    });
+}
+
+/**
+ * Fungsi untuk menghitung jumlah bintang berdasarkan due date
+ */
+function hitungJumlahBintang(dueDate) {
+    // Format dueDate dari masterPokok (misal: "22-Feb")
+    const today = new Date();
+    const [dueDay, dueMonthStr] = dueDate.split("-");
+    const monthMap = {
+        "Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5,
+        "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11
+    };
+    const dueMonth = monthMap[dueMonthStr];
+    const dueYear = today.getFullYear(); // Asumsikan tahun sekarang
+    const dueDateObj = new Date(dueYear, dueMonth, parseInt(dueDay));
+
+    // Hitung selisih waktu dalam hari
+    const timeDiff = today - dueDateObj;
+    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+    // Aturan jumlah bintang
+    let jumlahBintang = 5; // Maksimal bintang saat due date
+    if (daysDiff > 7) {
+        const weeksLate = Math.floor(daysDiff / 7);
+        jumlahBintang -= weeksLate;
+    }
+    return Math.max(jumlahBintang, 1); // Minimal 1 bintang
+}
+
 
 /**
  * Menampilkan modal loading
@@ -63,6 +321,7 @@ function hideLoadingModal() {
         modalInstance.hide();
     }
 }
+
 /**
  * Fetch data bintang peserta berdasarkan kelompok dengan pagination
  */
@@ -188,9 +447,11 @@ function renderBintang(bintangList) {
     
             // Tampilkan modal
             let modal = new bootstrap.Modal(document.getElementById("jumlahBintangModal"));
+            resetForm();
             modal.show();
         });
     });
+
     document.querySelectorAll(".detail-bintang-btn").forEach(button => {
         button.addEventListener("click", function () {
             let pesertaId = this.getAttribute("data-peserta");
