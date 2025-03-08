@@ -132,6 +132,7 @@ function renderBintangPokokTable(bintangList, kelompokId, pertemuanId) {
     tableContainer.innerHTML = "";
 
     let tableHTML = `
+    <div class="table-responsive">
         <table class="table table-striped table-bordered text-center">
             <thead class="table-dark">
                 <tr>
@@ -188,7 +189,7 @@ function renderBintangPokokTable(bintangList, kelompokId, pertemuanId) {
         }
     });
 
-    tableHTML += "</tbody></table>";
+    tableHTML += "</tbody></table></div>"; // Tutup wrapper div
     tableContainer.innerHTML = tableHTML;
 
     // 🎯 Tambahkan event listener untuk tombol checklist

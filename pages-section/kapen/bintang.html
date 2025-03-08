@@ -51,6 +51,35 @@
 
   <!-- Page CSS -->
   <style>
+    @media (max-width: 768px) {
+    .modal-dialog {
+        max-width: 95%;
+        margin: 0 auto;
+    }
+
+    .modal-body {
+        overflow-x: auto;
+    }
+
+    #bintangPokokTable table {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    #bintangPokokTable th, #bintangPokokTable td {
+        font-size: 14px; /* Perkecil teks di layar kecil */
+        padding: 8px;
+    }
+
+    /* Pastikan tombol tetap terlihat */
+    .btn-done {
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+}
+
     /* Responsif: Grid fleksibel */
     @media (max-width: 768px) {
       .col-md-4 {
