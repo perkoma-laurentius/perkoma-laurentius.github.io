@@ -78,7 +78,7 @@ const masterPokok = [
     { pokok: 15, hlm: [70, 71, 72], keterangan: "Bagian-bagian Perayaan Ekaristi", due: "18-May" }
 ];
 
-async function fetchBintangPokokTabel(kelompokId, pertemuanId) {
+async function fetchBintangPokokTabel(kelompokId, pertemuanId, pesertaId) {
     try {
         // 🔥 Ambil daftar peserta dari kelompok (API kelompok)
         const pesertaResponse = await NetworkHelper.get(ENDPOINTS.BINTANG.GET_BY_KELOMPOK(kelompokId));
@@ -87,7 +87,7 @@ async function fetchBintangPokokTabel(kelompokId, pertemuanId) {
             showToast("❌ Gagal mengambil peserta kelompok!", "danger");
             return;
         }
-        const pesertaList = pesertaResponse.data.items; // ✅ Simpan daftar peserta
+        const pesertaList = pesertaResponse.data.items;
 
         // 🔥 Ambil data bintang dari total peserta yang hadir (API total bintang)
         const bintangResponse = await NetworkHelper.get(ENDPOINTS.BINTANG.GETBINTANG_BY_KELOMPOK(kelompokId, 1, 15));
@@ -96,34 +96,30 @@ async function fetchBintangPokokTabel(kelompokId, pertemuanId) {
             showToast("❌ Gagal mengambil data bintang pokok!", "danger");
             return;
         }
-        const bintangList = bintangResponse.data.items.peserta; // ✅ Simpan daftar peserta yang mendapat bintang
+        const bintangList = bintangResponse.data.items.peserta;
 
-        // 🔥 Cocokkan peserta dari API kelompok dengan API total bintang
-        pesertaList.forEach((peserta) => {
-            const foundPeserta = bintangList.find(b => b.peserta_id === peserta.peserta_id);
-            if (foundPeserta) {
-                peserta.total_jumlah_bintang = foundPeserta.total_jumlah_bintang;
-                peserta.total_bintang_bonus = foundPeserta.total_bintang_bonus;
-                peserta.total_semua = foundPeserta.total_semua;
-            } else {
-                peserta.total_jumlah_bintang = { total: "0", detail: [] };
-                peserta.total_bintang_bonus = { total: "0", detail: [] };
-                peserta.total_semua = "0";
-            }
-        });
+        // 🔥 Cari peserta yang sedang dipilih
+        const peserta = pesertaList.find(p => p.peserta_id === pesertaId);
+        if (!peserta) {
+            console.warn(`⚠️ Peserta dengan ID ${pesertaId} tidak ditemukan.`);
+            return;
+        }
 
-        // 🔥 Render tabel dengan peserta_id yang benar
-        renderBintangPokokTable(pesertaList, pertemuanId);
+        // 🔥 Tambahkan data bintang yang sesuai dengan peserta yang dipilih
+        const pesertaBintang = bintangList.find(b => b.peserta_id === pesertaId) || {
+            total_jumlah_bintang: { total: "0", detail: [] }
+        };
+
+        // 🔥 Render tabel dengan hanya data peserta yang dipilih
+        renderBintangPokokTable(pesertaBintang, pesertaId, pertemuanId);
     } catch (error) {
         console.error("❌ Error fetching bintang pokok:", error);
         showToast("⚠️ Terjadi kesalahan saat mengambil data bintang pokok.", "danger");
     }
 }
 
-
-const urlParams = new URLSearchParams(window.location.search);
-const pertemuanId = urlParams.get("pertemuanId");
-function renderBintangPokokTable(bintangList, kelompokId, pertemuanId) {
+// 📌 Fungsi untuk merender tabel dengan peserta yang dipilih
+function renderBintangPokokTable(pesertaData, pesertaId, pertemuanId) {
     const tableContainer = document.getElementById("bintangPokokTable");
     if (!tableContainer) {
         console.error("❌ Element bintangPokokTable tidak ditemukan!");
@@ -132,7 +128,6 @@ function renderBintangPokokTable(bintangList, kelompokId, pertemuanId) {
     tableContainer.innerHTML = "";
 
     let tableHTML = `
-    <div class="table-responsive">
         <table class="table table-striped table-bordered text-center">
             <thead class="table-dark">
                 <tr>
@@ -147,21 +142,10 @@ function renderBintangPokokTable(bintangList, kelompokId, pertemuanId) {
     `;
 
     masterPokok.forEach((pokok) => {
-        let firstRow = true;
-
-        // 🔥 Cek apakah ada peserta yang sudah memiliki bintang untuk pokok ini
-        let isDone = bintangList.some(peserta => 
-            peserta.total_jumlah_bintang.detail.some(detail => 
-                detail.kategori.toLowerCase() === "pokok" && detail.deskripsi === `Pokok ${pokok.pokok}`
-            )
+        // 🔥 Cek apakah peserta ini sudah menyelesaikan pokok tertentu
+        let isDone = pesertaData.total_jumlah_bintang.detail.some(detail => 
+            detail.kategori.toLowerCase() === "pokok" && detail.deskripsi === `Pokok ${pokok.pokok}`
         );
-        let peserta = bintangList.find(p => 
-            !p.total_jumlah_bintang.detail.some(detail => 
-                detail.kategori.toLowerCase() === "pokok" && detail.deskripsi === `Pokok ${pokok.pokok}`
-            )
-        );
-
-       let pesertaId = peserta ? peserta.peserta_id : 0;
 
         tableHTML += `
             <tr>
@@ -170,7 +154,7 @@ function renderBintangPokokTable(bintangList, kelompokId, pertemuanId) {
                 <td rowspan="${pokok.hlm.length}">${pokok.keterangan}</td>
                 <td rowspan="${pokok.hlm.length}">${pokok.due}</td>
                 <td rowspan="${pokok.hlm.length}">
-                    <button class="btn btn-success btn-lg btn-done" 
+                    <button class="btn btn-success btn-lg btn-done"
                         data-pokok="${pokok.pokok}" 
                         data-peserta="${pesertaId}"
                         data-pertemuan="${pertemuanId}" 
@@ -189,12 +173,15 @@ function renderBintangPokokTable(bintangList, kelompokId, pertemuanId) {
         }
     });
 
-    tableHTML += "</tbody></table></div>"; // Tutup wrapper div
+    tableHTML += "</tbody></table>";
     tableContainer.innerHTML = tableHTML;
 
     // 🎯 Tambahkan event listener untuk tombol checklist
     setupChecklistEventListeners();
 }
+
+
+
 
 /**
  * Reset form setelah pengiriman bintang berhasil
@@ -480,6 +467,7 @@ function renderBintang(bintangList) {
             modal.show();
         });
     });
+    
     document.getElementById("kategoriBintang").addEventListener("change", function () {
         const kategori = this.value;
         const jumlahBintangInput = document.getElementById("jumlahBintangInput");
@@ -489,13 +477,25 @@ function renderBintang(bintangList) {
         deskripsiContainer.innerHTML = "";
     
         if (kategori === "pokok") {
-            deskripsiContainer.innerHTML = `
-                <label for="deskripsiBintang">Pilih Deskripsi Bintang Pokok</label>
-                <select id="deskripsiBintang" class="form-control">
-                    <option value="">Pilih Bintang Pokok</option>
-                    ${Array.from({ length: 12 }, (_, i) => `<option value="Pokok ${i + 1}">Pokok ${i + 1}</option>`).join("")}
-                </select>
-            `;
+            // 🔥 Ambil peserta ID dari modal
+            const pesertaId = document.getElementById("kategoriBintang").getAttribute("data-peserta");
+            const pertemuanId = document.getElementById("kategoriBintang").getAttribute("data-pertemuan");
+            const kelompokId = localStorage.getItem("kelompok_id");
+    
+            if (!pesertaId || !pertemuanId) {
+                showToast("❌ Peserta atau pertemuan tidak valid!", "danger");
+                return;
+            }
+    
+            // 🔥 Tutup modal jumlah bintang sebelum membuka modal bintang pokok
+            if (jumlahBintangModal) bootstrap.Modal.getInstance(jumlahBintangModal).hide();
+    
+            // 🔥 Panggil fungsi untuk merender tabel bintang pokok berdasarkan peserta
+            fetchBintangPokokTabel(kelompokId, pertemuanId, parseInt(pesertaId));
+    
+            // 🔥 Tampilkan modal bintang pokok
+            let modal = new bootstrap.Modal(bintangPokokModal);
+            modal.show();
         } else if (kategori === "doa_khusus") {
             deskripsiContainer.innerHTML = `
                 <label for="deskripsiBintang">Pilih Deskripsi Doa</label>
