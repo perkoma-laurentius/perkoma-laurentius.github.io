@@ -44,6 +44,7 @@ export function init() {
             modal.show();
         }
     });
+    
       
 
     // Event listener untuk pencarian dengan debounce
@@ -200,6 +201,22 @@ function resetForm() {
  * Setup event listener untuk tombol checklist
  */
 function setupChecklistEventListeners() {
+    document.querySelectorAll(".btn-close").forEach(button => {
+        button.addEventListener("click", function () {
+            console.log("✅ Menutup semua modal aktif...");
+    
+            let bintangPokokModal = document.getElementById("bintangPokokModal");
+            let jumlahBintangModal = document.getElementById("jumlahBintangModal");
+    
+            if (bintangPokokModal) bootstrap.Modal.getInstance(bintangPokokModal)?.hide();
+            if (jumlahBintangModal) bootstrap.Modal.getInstance(jumlahBintangModal)?.hide();
+    
+            // Hapus backdrop secara manual jika masih ada
+            document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
+            document.body.classList.remove("modal-open");
+        });
+    });
+    
     document.querySelectorAll(".btn-done").forEach(button => {
         button.addEventListener("click", async function () {
             const pokokId = parseInt(this.getAttribute("data-pokok"));
@@ -477,9 +494,8 @@ function renderBintang(bintangList) {
         deskripsiContainer.innerHTML = "";
     
         if (kategori === "pokok") {
-            // 🔥 Ambil peserta ID dari modal
-            const pesertaId = document.getElementById("kategoriBintang").getAttribute("data-peserta");
-            const pertemuanId = document.getElementById("kategoriBintang").getAttribute("data-pertemuan");
+            const pesertaId = this.getAttribute("data-peserta");
+            const pertemuanId = this.getAttribute("data-pertemuan");
             const kelompokId = localStorage.getItem("kelompok_id");
     
             if (!pesertaId || !pertemuanId) {
@@ -487,13 +503,10 @@ function renderBintang(bintangList) {
                 return;
             }
     
-            // 🔥 Tutup modal jumlah bintang sebelum membuka modal bintang pokok
             if (jumlahBintangModal) bootstrap.Modal.getInstance(jumlahBintangModal).hide();
     
-            // 🔥 Panggil fungsi untuk merender tabel bintang pokok berdasarkan peserta
             fetchBintangPokokTabel(kelompokId, pertemuanId, parseInt(pesertaId));
     
-            // 🔥 Tampilkan modal bintang pokok
             let modal = new bootstrap.Modal(bintangPokokModal);
             modal.show();
         } else if (kategori === "doa_khusus") {
@@ -509,23 +522,28 @@ function renderBintang(bintangList) {
                     <option value="Hapal 5 Perintah Gereja">Hapal 5 Perintah Gereja</option>
                 </select>
             `;
+            jumlahBintangInput.style.display = "none"; // Sembunyikan input jumlah bintang
+            // deskripsiContainer.innerHTML = `<input type="hidden" id="deskripsiBintang" value="Misa">`;
+
         } else if (kategori === "misa") {
-            deskripsiContainer.innerHTML = `
-        <input type="hidden" id="deskripsiBintang" value="Misa">
-            `;
+            deskripsiContainer.innerHTML = `<input type="hidden" id="deskripsiBintang" value="Misa">`;
+            jumlahBintangInput.style.display = "none"; // Sembunyikan input jumlah bintang
+        } else {
+            jumlahBintangInput.style.display = "block"; // Tampilkan kembali jika kategori lain dipilih
         }
-        
+    
+
     
         jumlahBintangInput.removeAttribute("disabled");
     
         // ✅ Debugging: Pastikan elemen `deskripsiBintang` ada
-        setTimeout(() => {
-            if (!document.getElementById("deskripsiBintang")) {
-                console.error("❌ Element deskripsiBintang tidak dibuat di DOM!");
-            } else {
-                console.log("✅ Element deskripsiBintang berhasil dibuat di DOM!");
-            }
-        }, 100);
+        // setTimeout(() => {
+        //     if (!document.getElementById("deskripsiBintang")) {
+        //         console.error("❌ Element deskripsiBintang tidak dibuat di DOM!");
+        //     } else {
+        //         console.log("✅ Element deskripsiBintang berhasil dibuat di DOM!");
+        //     }
+        // }, 100);
     });
 
     function tampilkanDetailBintang(peserta) {
@@ -590,8 +608,9 @@ function renderBintang(bintangList) {
     
         let kategoriBintangElement = document.getElementById("kategoriBintang");
         let kategoriBintang = kategoriBintangElement ? kategoriBintangElement.value.trim() : "";
-    
-        let jumlahBintang = parseInt(document.getElementById("jumlahBintangInput").value) || 0;
+        
+        let jumlahBintangInput = document.getElementById("jumlahBintangInput");
+        let jumlahBintang = kategoriBintang === "misa" ? 4 : parseInt(jumlahBintangInput.value) || 0;
         
         let deskripsiBintangElement = document.getElementById("deskripsiBintang");
         let deskripsi = deskripsiBintangElement ? deskripsiBintangElement.value.trim() : "";
@@ -601,6 +620,15 @@ function renderBintang(bintangList) {
             // showToast("⚠️ Pilih kategori bintang terlebih dahulu!", "warning");
             return;
         }
+        const doaBintangMapping = {
+            "Hapal Bapa Kami": 10,
+            "Hapal Aku Percaya": 15,
+            "Hapal Salam Maria": 10,
+            "Hapal Kemuliaan": 5,
+            "Hapal 10 Perintah Allah": 10,
+            "Hapal 5 Perintah Gereja": 10
+        };
+    
     
         console.log("Kategori:", kategoriBintang);
         console.log("Deskripsi:", deskripsi);
@@ -614,7 +642,16 @@ function renderBintang(bintangList) {
             showToast("❌ Pilih deskripsi Bintang Pokok 1-12!", "danger");
             return;
         }
-    
+       // Jika kategori "Misa", otomatis atur 4 bintang
+    if (kategoriBintang === "misa") {
+        deskripsi = "Misa";
+        jumlahBintang = 4;
+    }
+
+    // Jika kategori "Doa Khusus", ambil jumlah bintang dari mapping
+    if (kategoriBintang === "doa_khusus") {
+        jumlahBintang = doaBintangMapping[deskripsi] || 0; // Default 0 jika tidak ditemukan
+    }
         if (kategoriBintang === "doa_khusus" && deskripsi === "") {
             showToast("❌ Pilih salah satu doa!", "danger");
             return;
