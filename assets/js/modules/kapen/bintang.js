@@ -285,6 +285,8 @@ function setupChecklistEventListeners() {
 function hitungJumlahBintang(dueDate) {
     // Format dueDate dari masterPokok (misal: "22-Feb")
     const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset waktu ke awal hari agar perhitungan akurat
+
     const [dueDay, dueMonthStr] = dueDate.split("-");
     const monthMap = {
         "Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5,
@@ -293,19 +295,24 @@ function hitungJumlahBintang(dueDate) {
     const dueMonth = monthMap[dueMonthStr];
     const dueYear = today.getFullYear(); // Asumsikan tahun sekarang
     const dueDateObj = new Date(dueYear, dueMonth, parseInt(dueDay));
+    dueDateObj.setHours(0, 0, 0, 0); // Pastikan waktu di-reset ke awal hari
 
-    // Hitung selisih waktu dalam hari
-    const timeDiff = today - dueDateObj;
+    // Hitung selisih hari antara hari ini dan dueDate
+    const timeDiff = today.getTime() - dueDateObj.getTime();
     const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
-    // Aturan jumlah bintang
-    let jumlahBintang = 5; // Maksimal bintang saat due date
-    if (daysDiff > 7) {
-        const weeksLate = Math.floor(daysDiff / 7);
-        jumlahBintang -= weeksLate;
+    if (daysDiff < 0) {
+        // Jika peserta mengerjakan sebelum dueDate, tetap dapat 5 bintang
+        return 5;
+    } else if (daysDiff >= 0 && daysDiff < 7) {
+        // Jika peserta mengerjakan tepat di dueDate atau telat kurang dari 7 hari, tetap dapat 5 bintang
+        return 5;
+    } else {
+        // Jika peserta terlambat 7 hari atau lebih (1 minggu+), langsung turun ke 2 bintang
+        return 2;
     }
-    return Math.max(jumlahBintang, 1); // Minimal 1 bintang
 }
+
 
 
 /**
