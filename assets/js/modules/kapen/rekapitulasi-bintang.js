@@ -83,18 +83,62 @@ export function init() {
         `).join("");
 
         const footerHTML = `
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
+        </tbody>
+    </table>
+    <hr class="my-4">
+    <h6 class="text-center">📊 Grafik Total Bintang</h6>
+    <canvas id="bintangChart" height="100"></canvas>
+</div>
+</div>
+`;
 
-        container.innerHTML = headerHTML + bodyHTML + footerHTML;
+container.innerHTML = headerHTML + bodyHTML + footerHTML;
 
         document.getElementById("exportExcelBtn")?.addEventListener("click", () => {
             const table = container.querySelector("table");
             const wb = XLSX.utils.table_to_book(table, { sheet: "Rekap Bintang" });
             XLSX.writeFile(wb, `rekap-bintang-kelompok-${kelompokId}.xlsx`);
+        });
+        renderChart(pesertaList);
+
+    }
+
+    function renderChart(pesertaList) {
+        const ctx = document.getElementById("bintangChart").getContext("2d");
+
+        const labels = pesertaList.map(p => p.nama_panggilan_peserta);
+        const totalBintang = pesertaList.map(p => parseInt(p.total_semua || 0));
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Bintang',
+                    data: totalBintang,
+                    backgroundColor: 'rgba(115, 103, 240, 0.7)',
+                    borderColor: 'rgba(115, 103, 240, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 5 },
+                        title: { display: true, text: 'Jumlah Bintang' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Peserta' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                }
+            }
         });
     }
 
