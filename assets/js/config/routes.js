@@ -115,6 +115,11 @@ export const pageScripts = {
         fileName: 'pages-section/dashboard-kapen.html',
         script: '/assets/js/modules/dashboard-kapen.js'
     },
+    
+    REKAPITULASI_BINTANG_KAPEN: {
+        fileName: 'pages-section/kapen/rekapitulasi-bintang.html',
+        script: '/assets/js/modules/kapen/rekapitulasi-bintang.js'
+    },
 
 
    
