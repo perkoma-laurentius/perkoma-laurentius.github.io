@@ -109,6 +109,7 @@ function renderBintangChart(data) {
     // Ambil nama peserta dan total bintang
     const labels = data.map(item => item.nama);
     const bintangValues = data.map(item => parseInt(item.total_bintang));
+    const kelompokLabels = data.map(item => item.nama_kelompok);
 
     const canvas = document.getElementById('bintangChart');
     const ctx = canvas.getContext('2d');
@@ -153,8 +154,13 @@ function renderBintangChart(data) {
                             let index = tooltipItems[0].dataIndex;
                             return `👤 ${labels[index]}`; // ✅ Tampilkan nama di hover
                         },
+                        
                         label: function (tooltipItem) {
-                            return `⭐ ${tooltipItem.raw} Bintang`;
+                            const index = tooltipItem.dataIndex;
+                            return [
+                                `⭐ ${tooltipItem.raw} Bintang`,           // ✅ Jumlah bintang
+                                `Nama Kelompok : ${kelompokLabels[index]}`   // ✅ Nama kelompok
+                            ];
                         }
                     }
                 }
