@@ -12,7 +12,7 @@
   "description": "",
   "dependencies": {
     "express": "^4.21.2",
-    "jspdf": "^2.5.2"
+    "jspdf": "^3.0.0"
   },
   "devDependencies": {
     "http-server": "^14.1.1",
